@@ -1,0 +1,114 @@
+/* 公共样式 - 通用布局和容器 */
+
+/* 全屏容器 - 渐变背景 */
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
+}
+
+/* 卡片容器 */
+.page-card {
+  width: 100%;
+  background: white;
+  padding: 50px 45px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.5s ease-out;
+}
+
+/* 卡片进入动画 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 头部区域 */
+.header-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* 图标包装器 */
+.icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.gym-icon {
+  width: 36px;
+  height: 36px;
+  color: white;
+}
+
+/* 标题样式 */
+.page-title {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* 副标题样式 */
+.page-subtitle {
+  margin: 0;
+  color: #8492a6;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* 分隔线样式 */
+.section-divider {
+  position: relative;
+  text-align: center;
+  margin: 35px 0 25px;
+}
+
+.section-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e4e7ed, transparent);
+}
+
+.divider-text {
+  position: relative;
+  display: inline-block;
+  padding: 0 20px;
+  background: white;
+  color: #909399;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-card {
+    padding: 35px 25px;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+}
