@@ -1,0 +1,158 @@
+/* 组件公共样式 */
+
+/* 验证码组件 */
+.captcha-section {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.captcha-section .el-input {
+  flex: 1;
+}
+
+.captcha-image {
+  width: 120px;
+  height: 50px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  border: 2px solid #e4e7ed;
+  transition: all 0.3s;
+  position: relative;
+  padding: 4px;
+}
+
+.captcha-image:hover {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #e8ecf1 0%, #dce1e8 100%);
+  transform: scale(1.05);
+}
+
+.captcha-text {
+  font-weight: bold;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: #667eea;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 1.2;
+}
+
+.captcha-hint {
+  font-size: 10px;
+  color: #909399;
+  margin-top: 3px;
+  line-height: 1;
+}
+
+/* 短信验证码组件 */
+.sms-wrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.sms-wrapper .el-input {
+  flex: 1;
+}
+
+.sms-btn {
+  min-width: 120px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+}
+
+.sms-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.sms-btn:disabled {
+  background: #c0c4cc;
+  color: white;
+  cursor: not-allowed;
+}
+
+/* 头像上传组件 */
+.avatar-upload-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-uploader .el-upload {
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.avatar-box {
+  width: 120px;
+  height: 120px;
+  border: 3px dashed #dcdfe6;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+  background: #fafafa;
+}
+
+.avatar-box:hover {
+  border-color: #667eea;
+  background: #f5f7fa;
+  transform: scale(1.05);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8c939d;
+}
+
+.avatar-placeholder svg {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 8px;
+}
+
+.avatar-placeholder span {
+  font-size: 13px;
+}
+
+/* 底部链接区域 */
+.footer-section {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.footer-text {
+  color: #909399;
+  font-size: 14px;
+  margin-right: 5px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .captcha-image {
+    width: 100px;
+  }
+}

@@ -1,0 +1,6 @@
+/* 公共样式入口文件 */
+
+@import './common.css';
+@import './form.css';
+@import './button.css';
+@import './components.css';
