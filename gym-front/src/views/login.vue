@@ -1,7 +1,13 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useRouter } from 'vue-router';
+import { usePermissionStore } from '@/stores/permission';
+import { mockPermissions, transformPermissionsToMenus } from '@/utils/menuConfig';
+import { userApi } from '@/api';
 
+const router = useRouter();
+const permissionStore = usePermissionStore();
 const loginFormRef = ref(null);
 
 const loginForm = reactive({
@@ -12,10 +18,10 @@ const loginForm = reactive({
 
 // 假数据 - 模拟用户数据库
 const mockUsers = [
-  { username: 'admin', password: '123456', name: '管理员' },
-  { username: 'zhangsan', password: '123456', name: '张三' },
-  { username: '13800138000', password: '123456', name: '李四' },
-  { username: 'test@qq.com', password: '123456', name: '测试用户' }
+  { username: 'admin', password: '123456', name: '超级管理员', role: 'superAdmin' },
+  { username: 'zhangsan', password: '123456', name: '管理员', role: 'admin' },
+  { username: '13800138000', password: '123456', name: '教练李四', role: 'coach' },
+  { username: 'test@qq.com', password: '123456', name: '会员王五', role: 'member' }
 ];
 
 // 自定义验证码校验规则
@@ -24,17 +30,6 @@ const validateCaptcha = (rule, value, callback) => {
     callback(new Error('请输入验证码'));
   } else if (value.toLowerCase() !== captchaText.value.toLowerCase()) {
     callback(new Error('验证码错误'));
-  } else {
-    callback();
-  }
-};
-
-// 自定义用户名密码校验规则
-const validateCredentials = (rule, value, callback) => {
-  if (rule.field === 'username' && !value) {
-    callback(new Error('请输入用户名'));
-  } else if (rule.field === 'password' && !value) {
-    callback(new Error('请输入密码'));
   } else {
     callback();
   }
@@ -64,7 +59,6 @@ const refreshCaptcha = () => {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   captchaText.value = result;
-  // 刷新验证码后清空验证码输入框和校验状态
   loginForm.captcha = '';
   if (loginFormRef.value) {
     loginFormRef.value.clearValidate('captcha');
@@ -75,31 +69,43 @@ refreshCaptcha();
 const handleLogin = async () => {
   if (!loginFormRef.value) return;
   
-  // 先进行表单校验
-  loginFormRef.value.validate((valid) => {
+  loginFormRef.value.validate(async (valid) => {
     if (valid) {
-      // 校验通过，进行登录验证
       const user = mockUsers.find(
         u => u.username === loginForm.username && u.password === loginForm.password
       );
 
+      // const res = await userApi.login(loginForm.value)
+
       if (user) {
         ElMessage.success(`欢迎回来，${user.name}！`);
-        console.log('登录成功，用户信息:', user);
-        
-        // 模拟保存登录状态
+      
+        // 保存登录状态
         localStorage.setItem('userInfo', JSON.stringify(user));
+        localStorage.setItem('token', 'mock-token-' + Date.now());
         
-        // 延迟跳转，让用户看到成功提示
+        // 根据用户角色获取权限
+        const permissions = mockPermissions[user.role] || [];
+        console.log('用户权限:', permissions);
+        
+        // 转换为菜单结构
+        const menus = transformPermissionsToMenus(permissions);
+        console.log('生成的菜单:', menus);
+        
+        // 保存到 store
+        permissionStore.setMenus(menus);
+        permissionStore.setPermissions(permissions.map(p => p.permission_code));
+        permissionStore.setUserInfo(user);
+        
+        // 延迟跳转
         setTimeout(() => {
-          window.location.href = '/register'; // 跳转到注册页
+          router.push('/dashboard');
         }, 1000);
       } else {
         ElMessage.error('用户名或密码错误');
-        refreshCaptcha(); // 登录失败后刷新验证码
+        refreshCaptcha();
       }
     } else {
-      // 校验失败，弹窗提示用户
       ElMessage.warning('请检查表单填写是否正确');
       return false;
     }
@@ -107,7 +113,7 @@ const handleLogin = async () => {
 };
 
 const goToRegister = () => {
-  window.location.href = 'register';
+  router.push('/register');
 };
 
 const showForgotPassword = () => {
@@ -225,7 +231,6 @@ const showForgotPassword = () => {
   }
 }
 
-/* 头部样式 */
 .header-section {
   text-align: center;
   margin-bottom: 40px;
@@ -264,7 +269,6 @@ const showForgotPassword = () => {
   font-weight: 400;
 }
 
-/* 表单项样式 */
 .form-item {
   margin-bottom: 24px;
 }
@@ -276,7 +280,6 @@ const showForgotPassword = () => {
   margin-bottom: 8px;
 }
 
-/* 验证码样式 */
 .captcha-section {
   display: flex;
   gap: 12px;
@@ -326,7 +329,6 @@ const showForgotPassword = () => {
   line-height: 1;
 }
 
-/* 忘记密码 */
 .forgot-password {
   text-align: right;
   margin-top: -10px;
@@ -343,7 +345,6 @@ const showForgotPassword = () => {
   color: #667eea;
 }
 
-/* 输入框样式优化 */
 .form-item :deep(.el-input__wrapper) {
   border-radius: 8px;
   box-shadow: 0 0 0 1px #dcdfe6 inset;
@@ -358,7 +359,6 @@ const showForgotPassword = () => {
   box-shadow: 0 0 0 1px #667eea inset;
 }
 
-/* 主按钮样式 */
 .main-btn {
   width: 100%;
   height: 50px;
@@ -382,7 +382,6 @@ const showForgotPassword = () => {
   transform: translateY(0);
 }
 
-/* 注册区域样式 */
 .register-section {
   text-align: center;
   margin-top: 30px;
@@ -407,7 +406,6 @@ const showForgotPassword = () => {
   color: #764ba2;
 }
 
-/* 响应式设计 */
 @media (max-width: 768px) {
   .login-card {
     padding: 35px 25px;

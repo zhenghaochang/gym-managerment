@@ -1,8 +1,21 @@
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+// 判断是否隐藏布局（登录注册页）
+const hideLayout = computed(() => route.meta.hideLayout)
 </script>
 
 <template>
-  <div class="app-container">
+  <div v-if="hideLayout" class="full-page">
+    <!-- 登录注册页面，无菜单和导航栏 -->
+    <router-view></router-view>
+  </div>
+  
+  <div v-else class="app-container">
+    <!-- 主系统页面，有菜单和导航栏 -->
     <MainMenu />
     <div class="main-container">
       <Navigation />
@@ -14,6 +27,14 @@
 </template>
 
 <style scoped>
+/* 全屏页面（登录注册） */
+.full-page {
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+}
+
+/* 主系统布局 */
 .app-container {
   display: flex;
   width: 100%;
