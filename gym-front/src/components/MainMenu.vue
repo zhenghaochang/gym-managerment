@@ -1,75 +1,19 @@
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+ <script setup>
+import { computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { usePermissionStore } from '@/stores/permission';
 
 const router = useRouter();
-const activeMenu = ref('/dashboard');
+const route = useRoute();
+const permissionStore = usePermissionStore();
 
-// 菜单数据
-const menuItems = [
-  {
-    title: '工作台',
-    icon: 'DataBoard',
-    path: '/dashboard'
-  },
-  {
-    title: '会员管理',
-    icon: 'User',
-    children: [
-      { title: '会员列表', path: '/members/list' },
-      { title: '会员卡管理', path: '/members/cards' },
-      { title: '会员等级', path: '/members/levels' }
-    ]
-  },
-  {
-    title: '课程管理',
-    icon: 'Reading',
-    children: [
-      { title: '课程列表', path: '/courses/list' },
-      { title: '课程预约', path: '/courses/booking' },
-      { title: '课程分类', path: '/courses/category' }
-    ]
-  },
-  {
-    title: '教练管理',
-    icon: 'UserFilled',
-    children: [
-      { title: '教练列表', path: '/coaches/list' },
-      { title: '教练排班', path: '/coaches/schedule' },
-      { title: '教练评价', path: '/coaches/reviews' }
-    ]
-  },
-  {
-    title: '器材管理',
-    icon: 'Box',
-    children: [
-      { title: '器材列表', path: '/equipment/list' },
-      { title: '器材维护', path: '/equipment/maintenance' },
-      { title: '器材采购', path: '/equipment/purchase' }
-    ]
-  },
-  {
-    title: '财务管理',
-    icon: 'Wallet',
-    children: [
-      { title: '收入统计', path: '/finance/income' },
-      { title: '支出统计', path: '/finance/expense' },
-      { title: '财务报表', path: '/finance/reports' }
-    ]
-  },
-  {
-    title: '系统设置',
-    icon: 'Setting',
-    children: [
-      { title: '基础设置', path: '/settings/basic' },
-      { title: '权限管理', path: '/settings/permissions' },
-      { title: '操作日志', path: '/settings/logs' }
-    ]
-  }
-];
+// 从 store 获取动态菜单
+const menuItems = computed(() => permissionStore.menus);
+
+// 当前激活的菜单
+const activeMenu = computed(() => route.path);
 
 const handleMenuClick = (path) => {
-  activeMenu.value = path;
   router.push(path);
 };
 </script>
@@ -92,9 +36,9 @@ const handleMenuClick = (path) => {
       <el-menu
         :default-active="activeMenu"
         class="sidebar-menu-list"
-        background-color="#2c3e50"
-        text-color="#ecf0f1"
-        active-text-color="#667eea"
+        background-color="transparent"
+        text-color="#a6adc8"
+        active-text-color="#cdd6f4"
       >
         <template v-for="item in menuItems" :key="item.path || item.title">
           <!-- 没有子菜单的项 -->

@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -8,6 +9,7 @@ import MainMenu from './components/MainMenu.vue'
 import Navigation from './components/Navigation.vue'
 
 const app = createApp(App)
+const pinia = createPinia()
 
 // 注册所有图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -18,6 +20,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.component('MainMenu', MainMenu)
 app.component('Navigation', Navigation)
 
+app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
 app.mount('#app')

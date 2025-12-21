@@ -41,11 +41,22 @@ const handleCommand = (command) => {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        ElMessage.success('退出成功');
-        // 这里应该清除登录状态并跳转到登录页
-        setTimeout(() => {
-          window.location.href = '/login';
-        }, 1000);
+        // 清除登录状态
+        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
+        
+        // 清除 store 中的权限信息
+        import('@/stores/permission').then(({ usePermissionStore }) => {
+          const permissionStore = usePermissionStore();
+          permissionStore.clearPermission();
+          
+          ElMessage.success('退出成功');
+          
+          // 跳转到登录页
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 500);
+        });
       }).catch(() => {
         // 取消退出
       });
