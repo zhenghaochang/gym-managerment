@@ -8,6 +8,10 @@ spring:
       url: jdbc:mysql://localhost:3306/gym?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: 8667663378
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
 
 mybatis:
   #mapper????

@@ -8,7 +8,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import zhenghc.common.BaseConstants;
 import zhenghc.common.util.JwtUtil;
+import zhenghc.common.util.RedisUtil;
 import zhenghc.entity.User;
 
 import javax.servlet.FilterChain;
@@ -25,6 +27,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;  // 注入你的JwtUtil
+
+
+    public BaseConstants baseConstants;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -60,12 +65,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // TODO 从redis中获取完整的用户信息
         // 这里暂时创建一个简单的user对象
         User user = new User();
-        user.setId(userId);
-        user.setUsername(username);
-        // 如果有权限信息，也需要设置
-        // user.setPermissions(permissions);
+        user.setId((Long) RedisUtil.getKey(BaseConstants.USER_ID_KEY+userId));
 
         // 存入SecurityContextHolder
+        //内部由ThreadLocal实现，保证每个用户取到自己的信息
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
