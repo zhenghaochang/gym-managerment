@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zhenghc.mapper.UserMapper">
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id">
+        insert into gym.user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userDTO.username != null">username,</if>
+            <if test="userDTO.password != null">password,</if>
+            <if test="userDTO.email != null">email,</if>
+            <if test="userDTO.phone != null">phone,</if>
+            <if test="userDTO.realName != null">real_name,</if>
+            <if test="userDTO.nickName != null">nickname,</if>
+            <if test="userDTO.avatar != null">avatar,</if>
+            <if test="userDTO.gender != null">gender,</if>
+            <if test="userDTO.birthday != null">birthday,</if>
+            <if test="userDTO.height != null">height,</if>
+            <if test="userDTO.weight != null">weight,</if>
+            <if test="userDTO.userType != null">user_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userDTO.username != null">#{userDTO.username},</if>
+            <if test="userDTO.password != null">#{userDTO.password},</if>
+            <if test="userDTO.email != null">#{userDTO.email},</if>
+            <if test="userDTO.phone != null">#{userDTO.phone},</if>
+            <if test="userDTO.realName != null">#{userDTO.realName},</if>
+            <if test="userDTO.nickName != null">#{userDTO.nickName},</if>
+            <if test="userDTO.avatar != null">#{userDTO.avatar},</if>
+            <if test="userDTO.gender != null">#{userDTO.gender},</if>
+            <if test="userDTO.birthday != null">#{userDTO.birthday},</if>
+            <if test="userDTO.height != null">#{userDTO.height},</if>
+            <if test="userDTO.weight != null">#{userDTO.weight},</if>
+            <if test="userDTO.userType != null">#{userDTO.userType},</if>
+        </trim>
+    </insert>
+    <insert id="insertUserRole">
+        insert into gym.user_role(user_id, role_id) values (#{id}, 4)
+    </insert>
+
+
+    <!-- 查询用户 -->
+    <select id="selectUserByUserName" resultType="zhenghc.entity.User">
+        SELECT * FROM gym.user WHERE username = #{username}
+    </select>
+
+    <!-- 单独查询权限 -->
+    <select id="selectPermissionsByUserId" resultType="String">
+        SELECT DISTINCT p.permission_code
+        FROM gym.user_role ur
+                 JOIN gym.role_permission rp ON ur.role_id = rp.role_id
+                 JOIN gym.permission p ON rp.permission_id = p.id
+        WHERE ur.user_id = #{userId}
+    </select>
+    <select id="selectUserByEmail" resultType="zhenghc.entity.User">
+        select * from gym.user where email = #{email}
+    </select>
+</mapper>

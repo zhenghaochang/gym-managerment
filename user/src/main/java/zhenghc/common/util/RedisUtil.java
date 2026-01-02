@@ -8,14 +8,25 @@ import org.springframework.stereotype.Component;
 public class RedisUtil {
 
     @Autowired
-    private static RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
-    public static void setKey(String key, Object value){
+    public void set(String key, Object value){
         redisTemplate.opsForValue().set(key, value);
     }
 
-    public static Object getKey(String key){
+    public Object getValue(String key){
         return redisTemplate.opsForValue().get(key);
+    }
+
+    /**
+     * 限时，按分钟
+     */
+    public void setMin(String key, Object value, Integer time){
+        redisTemplate.opsForValue().set(key, value, time, java.util.concurrent.TimeUnit.MINUTES);
+    }
+
+    public void delete(String key){
+        redisTemplate.delete(key);
     }
 
 }

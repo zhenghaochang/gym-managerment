@@ -1,5 +1,7 @@
 server:
   port: 8081
+  servlet:
+    context-path: /api
 
 spring:
   datasource:
@@ -11,7 +13,37 @@ spring:
   redis:
     host: localhost
     port: 6379
+    password: 8667663378
     database: 0
+  mail:
+    host: smtp.qq.com  # 以QQ邮箱为例，其他邮箱修改为对应的smtp服务器
+    port: 587  # 或465，具体看邮箱服务商要求
+    username: 1170209085@qq.com  # 发送邮件的邮箱地址
+    password: pslrquswqlizjigc  # 邮箱的授权码，不是登录密码
+    default-encoding: UTF-8
+    properties:
+      timeout: 5000
+      connection-timeout: 5000
+      write-timeout: 5000
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true  # 如果是TLS连接，设置为true
+          ssl:
+            enable: false  # 如果是SSL连接，设置为true，并且端口通常为465
+        debug: true
+  thymeleaf:
+    prefix: classpath:/templates/    # 默认就是这个x`
+    suffix: .html                    # 默认就是这个
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
+app:
+  email:
+    from: 1170209085@qq.com
+    company: "老郑健身"
 
 mybatis:
   #mapper????
@@ -23,6 +55,6 @@ mybatis:
 
 sky:
   jwt:
-    secret-key: zhenghaochangdetoken
+    secret-key: thisissecretkeyzhenghaochangdetoken
     time-mill: 86400000  #????:??
     token-name: authorization

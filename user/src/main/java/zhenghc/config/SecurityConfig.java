@@ -38,14 +38,6 @@ public class SecurityConfig {
     }
 
     /**
-     * 获取AuthenticationManager（认证管理器），登录时认证使用，这样无需再login方法里面手动调用service层方法去查数据库
-     */
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
-
-    /**
      * Security过滤器链配置
      */
     @Bean
@@ -59,7 +51,7 @@ public class SecurityConfig {
                 // 配置请求权限
                 .authorizeRequests()
                 // 允许匿名访问的接口
-                .antMatchers("/api/user/login", "/api/user/register").anonymous()
+                .antMatchers("/user/login", "/user/register" , "/public/**", "/user/getEmailCode").anonymous()
                 // 其他所有请求都需要认证
                 .anyRequest().authenticated()
                 .and()
