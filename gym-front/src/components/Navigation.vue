@@ -1,14 +1,41 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { usePermissionStore } from '@/stores/permission';
 
-// 假数据 - 当前用户信息
-const userInfo = ref({
-  name: '张三',
-  avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-  role: '管理员',
-  email: 'zhangsan@gym.com'
+const permissionStore = usePermissionStore();
+
+// 从 store 或 localStorage 获取用户信息
+const userInfo = computed(() => {
+  const storeUser = permissionStore.userInfo;
+  if (storeUser && storeUser.username) {
+    return {
+      name: storeUser.nickName || storeUser.realName || storeUser.username,
+      avatar: storeUser.avatar || 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+      role: getUserRole(storeUser.userType),
+      email: storeUser.email || ''
+    };
+  }
+  // 尝试从 localStorage 获取
+  const localUser = JSON.parse(localStorage.getItem('userInfo') || '{}');
+  return {
+    name: localUser.nickName || localUser.realName || localUser.username || '用户',
+    avatar: localUser.avatar || 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+    role: getUserRole(localUser.userType),
+    email: localUser.email || ''
+  };
 });
+
+// 根据 userType 获取角色名称
+const getUserRole = (userType) => {
+  const roleMap = {
+    1: '超级管理员',
+    2: '管理员',
+    3: '教练',
+    4: '会员'
+  };
+  return roleMap[userType] || '用户';
+};
 
 // 通知数据
 const notifications = ref([
