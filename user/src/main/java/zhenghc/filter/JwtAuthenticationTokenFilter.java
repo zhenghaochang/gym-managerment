@@ -28,9 +28,31 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;  // 注入你的JwtUtil
 
+    @Autowired
+    private RedisUtil redisUtil;
 
     public BaseConstants baseConstants;
 
+
+    // 不需要 Token 验证的路径
+    private static final String[] WHITE_LIST = {
+            "/user/login",
+            "/user/register",
+            "/public/",
+            "/user/getEmailCode"
+    };
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        System.out.println("11111"+path);
+        for (String white : WHITE_LIST) {
+            if (path.contains(white)) {
+                return true;  // 跳过此过滤器
+            }
+        }
+        return false;
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -64,8 +86,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         // TODO 从redis中获取完整的用户信息
         // 这里暂时创建一个简单的user对象
-        User user = new User();
-        user.setId((Long) RedisUtil.getKey(BaseConstants.USER_ID_KEY+userId));
+        User user = (User) redisUtil.getValue(BaseConstants.USER_ID_KEY+userId);
 
         // 存入SecurityContextHolder
         //内部由ThreadLocal实现，保证每个用户取到自己的信息
