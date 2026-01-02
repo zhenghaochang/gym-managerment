@@ -31,14 +31,14 @@ export function setupInterceptors(service, serviceName = '服务') {
       
       console.log(`[${serviceName}] 响应:`, response.config.url, res)
       
-      // 根据后端返回的状态码判断（根据你的后端实际情况调整）
-      // 假设后端返回格式：{ code: 200, data: {}, message: '' }
-      if (res.code === 200 || res.code === 0 || res.success === true) {
+      // 根据后端返回格式：{ resCode: "00", resMsg: "", result: T }
+      // resCode: "00"-成功 "99"-失败
+      if (res.resCode === '00') {
         return res
       } else {
         // 业务错误
-        ElMessage.error(res.message || '请求失败')
-        return Promise.reject(new Error(res.message || '请求失败'))
+        ElMessage.error(res.resMsg || '请求失败')
+        return Promise.reject(new Error(res.resMsg || '请求失败'))
       }
     },
     error => {
