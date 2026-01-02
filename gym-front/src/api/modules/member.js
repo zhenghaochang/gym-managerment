@@ -1,4 +1,4 @@
-import userService from '../services/userService'
+import apiService from '../services/apiService'
 
 /**
  * 会员管理 API
@@ -6,26 +6,26 @@ import userService from '../services/userService'
 export const memberApi = {
   // 获取会员列表
   getMemberList(params) {
-    return userService.get('/api/member/list', { params })
+    return apiService.get('/member/list', { params })
   },
   
   // 获取会员详情
   getMemberDetail(id) {
-    return userService.get(`/api/member/${id}`)
+    return apiService.get(`/member/${id}`)
   },
   
   // 添加会员
   addMember(data) {
-    return userService.post('/api/member', data)
+    return apiService.post('/member', data)
   },
   
   // 更新会员信息
   updateMember(id, data) {
-    return userService.put(`/api/member/${id}`, data)
+    return apiService.put(`/member/${id}`, data)
   },
   
   // 删除会员
   deleteMember(id) {
-    return userService.delete(`/api/member/${id}`)
+    return apiService.delete(`/member/${id}`)
   }
 }

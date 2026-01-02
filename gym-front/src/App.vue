@@ -1,11 +1,20 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { usePermissionStore } from '@/stores/permission'
 
 const route = useRoute()
+const permissionStore = usePermissionStore()
 
 // 判断是否隐藏布局（登录注册页）
 const hideLayout = computed(() => route.meta.hideLayout)
+
+// 页面加载时恢复权限数据
+onMounted(() => {
+  if (permissionStore.menus.length === 0) {
+    permissionStore.restoreFromStorage()
+  }
+})
 </script>
 
 <template>

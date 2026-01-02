@@ -1,15 +1,19 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useRouter } from 'vue-router';
+import { userApi } from '@/api';
 
+const router = useRouter();
 const registerFormRef = ref(null);
+const loading = ref(false);
 
 const registerForm = reactive({
   username: '',
   password: '',
   confirmPassword: '',
   phone: '',
-  smsCode: '',
+  emailCode: '',
   email: '',
   realName: '',
   nickname: '',
@@ -21,7 +25,7 @@ const registerForm = reactive({
 });
 
 // 自定义校验规则
-const validatePassword = (rule, value, callback) => {
+const validatePassword = (_rule, value, callback) => {
   if (!value) {
     callback(new Error('请输入密码'));
   } else if (value.length < 6) {
@@ -35,7 +39,7 @@ const validatePassword = (rule, value, callback) => {
   }
 };
 
-const validateConfirmPassword = (rule, value, callback) => {
+const validateConfirmPassword = (_rule, value, callback) => {
   if (!value) {
     callback(new Error('请再次输入密码'));
   } else if (value !== registerForm.password) {
@@ -45,18 +49,18 @@ const validateConfirmPassword = (rule, value, callback) => {
   }
 };
 
-const validatePhone = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error('请输入手机号'));
-  } else if (!/^1[3-9]\d{9}$/.test(value)) {
+const validatePhone = (_rule, value, callback) => {
+  if (value && !/^1[3-9]\d{9}$/.test(value)) {
     callback(new Error('请输入正确的手机号'));
   } else {
     callback();
   }
 };
 
-const validateEmail = (rule, value, callback) => {
-  if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+const validateEmail = (_rule, value, callback) => {
+  if (!value) {
+    callback(new Error('请输入邮箱'));
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
     callback(new Error('请输入正确的邮箱格式'));
   } else {
     callback();
@@ -77,14 +81,14 @@ const registerRules = {
     { required: true, validator: validateConfirmPassword, trigger: 'change' }
   ],
   phone: [
-    { required: true, validator: validatePhone, trigger: 'change' }
-  ],
-  smsCode: [
-    { required: true, message: '请输入短信验证码', trigger: 'blur' },
-    { len: 6, message: '验证码为6位数字', trigger: 'blur' }
+    { validator: validatePhone, trigger: 'change' }
   ],
   email: [
-    { validator: validateEmail, trigger: 'change' }
+    { required: true, validator: validateEmail, trigger: 'change' }
+  ],
+  emailCode: [
+    { required: true, message: '请输入邮箱验证码', trigger: 'blur' },
+    { len: 6, message: '验证码为6位数字', trigger: 'blur' }
   ],
   realName: [
     { required: true, message: '请输入真实姓名', trigger: 'change' },
@@ -96,22 +100,35 @@ const registerRules = {
   ]
 };
 
-const smsCountdown = ref(0);
-const sendSmsCode = () => {
-  // 先校验手机号
-  registerFormRef.value.validateField('phone', (valid) => {
+const emailCountdown = ref(0);
+const emailCodeLoading = ref(false);
+
+const sendEmailCode = async () => {
+  // 先校验邮箱
+  registerFormRef.value.validateField('email', async (valid) => {
     if (valid) {
-      // 模拟发送验证码（实际应该是 123456）
-      ElMessage.success('短信验证码已发送，验证码为：123456');
-      smsCountdown.value = 60;
-      const timer = setInterval(() => {
-        smsCountdown.value--;
-        if (smsCountdown.value <= 0) {
-          clearInterval(timer);
-        }
-      }, 1000);
+      emailCodeLoading.value = true;
+      try {
+        // 调用后端接口发送验证码
+        console.log("注册邮箱为：",registerForm.email)
+        await userApi.getEmailCode(registerForm.email);
+        
+        ElMessage.success('验证码已发送到您的邮箱');
+        emailCountdown.value = 60;
+        const timer = setInterval(() => {
+          emailCountdown.value--;
+          if (emailCountdown.value <= 0) {
+            clearInterval(timer);
+          }
+        }, 1000);
+      } catch (error) {
+        console.error('发送验证码失败:', error);
+        // 错误信息已在拦截器中显示
+      } finally {
+        emailCodeLoading.value = false;
+      }
     } else {
-      ElMessage.error('请先输入正确的手机号');
+      ElMessage.error('请先输入正确的邮箱');
     }
   });
 };
@@ -120,22 +137,47 @@ const handleRegister = async () => {
   if (!registerFormRef.value) return;
 
   // 进行表单校验
-  registerFormRef.value.validate((valid) => {
+  registerFormRef.value.validate(async (valid) => {
     if (valid) {
-      // 校验通过，验证短信验证码（假数据）
-      if (registerForm.smsCode !== '123456') {
-        ElMessage.error('短信验证码错误');
-        return false;
-      }
 
-      // 模拟注册成功
-      ElMessage.success('注册成功，即将跳转到登录页');
-      console.log('注册信息:', registerForm);
+      loading.value = true;
       
-      // 延迟跳转
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
+      try {
+        // 构建注册参数（匹配后端 RegistUserDTO）
+        const registerData = {
+          username: registerForm.username,
+          password: registerForm.password,
+          phone: registerForm.phone,
+          email: registerForm.email || null,
+          realName: registerForm.realName,
+          nickName: registerForm.nickname,
+          avatar: registerForm.avatar || null,
+          gender: registerForm.gender === 'male' ? 1 : registerForm.gender === 'female' ? 2 : null,
+          birthday: registerForm.birthday || null,
+          height: registerForm.height || null,
+          weight: registerForm.weight || null,
+          userType: 4,
+          code: registerForm.emailCode  // 默认注册为会员
+        };
+        
+        // 调用注册接口
+        const res = await userApi.register(registerData);
+        
+        // 注册成功
+        ElMessage.success('注册成功，正在前往登录页');
+        
+        // 延迟跳转到登录页
+        setTimeout(() => {
+          router.push('/login');
+        }, 1500);
+        
+      } catch (error) {
+        // 注册失败，显示后端返回的错误信息
+        console.error('注册失败:', error);
+        // 错误信息已在拦截器中通过 ElMessage.error 显示
+      } finally {
+        loading.value = false;
+      }
     } else {
       // 校验失败，弹窗提示
       ElMessage.warning('请检查表单填写是否正确');
@@ -145,7 +187,7 @@ const handleRegister = async () => {
 };
 
 const goToLogin = () => {
-  window.location.href = 'login';
+  router.push('/login');
 };
 
 const handleAvatarChange = (file) => {
@@ -166,9 +208,12 @@ const handleAvatarChange = (file) => {
   const reader = new FileReader();
   reader.onload = (e) => {
     registerForm.avatar = e.target.result;
-    ElMessage.success('头像上传成功');
   };
   reader.readAsDataURL(file.raw);
+};
+
+const removeAvatar = () => {
+  registerForm.avatar = null;
 };
 </script>
 
@@ -230,40 +275,41 @@ const handleAvatarChange = (file) => {
           </el-form-item>
         </div>
 
-        <el-form-item label="手机号" prop="phone" class="form-item">
+        <el-form-item label="邮箱" prop="email" class="form-item">
+          <el-input 
+            v-model="registerForm.email" 
+            placeholder="请输入邮箱"
+            size="large"
+            prefix-icon="Message"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item label="邮箱验证码" prop="emailCode" class="form-item">
+          <div class="sms-wrapper">
+            <el-input 
+              v-model="registerForm.emailCode" 
+              placeholder="请输入邮箱验证码"
+              size="large"
+              prefix-icon="Key"
+            ></el-input>
+            <el-button 
+              @click="sendEmailCode" 
+              :disabled="emailCountdown > 0 || emailCodeLoading" 
+              :loading="emailCodeLoading"
+              size="large"
+              class="sms-btn"
+            >
+              {{ emailCountdown > 0 ? `${emailCountdown}s` : '获取验证码' }}
+            </el-button>
+          </div>
+        </el-form-item>
+
+        <el-form-item label="手机号（选填）" prop="phone" class="form-item">
           <el-input 
             v-model="registerForm.phone" 
             placeholder="请输入手机号"
             size="large"
             prefix-icon="Phone"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item label="短信验证码" prop="smsCode" class="form-item">
-          <div class="sms-wrapper">
-            <el-input 
-              v-model="registerForm.smsCode" 
-              placeholder="请输入短信验证码"
-              size="large"
-              prefix-icon="Message"
-            ></el-input>
-            <el-button 
-              @click="sendSmsCode" 
-              :disabled="smsCountdown > 0" 
-              size="large"
-              class="sms-btn"
-            >
-              {{ smsCountdown > 0 ? `${smsCountdown}s` : '获取验证码' }}
-            </el-button>
-          </div>
-        </el-form-item>
-
-        <el-form-item label="邮箱（选填）" prop="email" class="form-item">
-          <el-input 
-            v-model="registerForm.email" 
-            placeholder="可用于找回密码"
-            size="large"
-            prefix-icon="Message"
           ></el-input>
         </el-form-item>
 
@@ -298,14 +344,14 @@ const handleAvatarChange = (file) => {
                 :show-file-list="false"
                 :on-change="handleAvatarChange"
                 :auto-upload="false"
+                :disabled="true"
             >
               <div class="avatar-box">
-                <img v-if="registerForm.avatar" :src="registerForm.avatar" class="avatar">
-                <div v-else class="avatar-placeholder">
+                <div class="avatar-placeholder">
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
                   </svg>
-                  <span>点击上传</span>
+                  <span>暂未开放</span>
                 </div>
               </div>
             </el-upload>
@@ -362,10 +408,11 @@ const handleAvatarChange = (file) => {
         <el-button
             type="primary"
             @click="handleRegister"
+            :loading="loading"
             class="main-btn"
             size="large"
         >
-          立即注册
+          {{ loading ? '注册中...' : '立即注册' }}
         </el-button>
 
         <div class="back-to-login">
@@ -532,6 +579,11 @@ const handleAvatarChange = (file) => {
   justify-content: center;
 }
 
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
 .avatar-uploader .el-upload {
   border: none;
   border-radius: 12px;
@@ -580,6 +632,33 @@ const handleAvatarChange = (file) => {
 
 .avatar-placeholder span {
   font-size: 13px;
+}
+
+.avatar-delete {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background: #ff4d4f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.4);
+}
+
+.avatar-delete:hover {
+  background: #ff7875;
+  transform: scale(1.1);
+}
+
+.avatar-delete svg {
+  width: 14px;
+  height: 14px;
+  color: white;
 }
 
 /* 输入框样式优化 */

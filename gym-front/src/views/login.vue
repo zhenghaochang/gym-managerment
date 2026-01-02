@@ -3,12 +3,13 @@ import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { usePermissionStore } from '@/stores/permission';
-import { mockPermissions, transformPermissionsToMenus } from '@/utils/menuConfig';
+import { transformPermissionsToMenusByCode } from '@/utils/menuConfig';
 import { userApi } from '@/api';
 
 const router = useRouter();
 const permissionStore = usePermissionStore();
 const loginFormRef = ref(null);
+const loading = ref(false);
 
 const loginForm = reactive({
   username: '',
@@ -16,16 +17,8 @@ const loginForm = reactive({
   captcha: ''
 });
 
-// 假数据 - 模拟用户数据库
-const mockUsers = [
-  { username: 'admin', password: '123456', name: '超级管理员', role: 'superAdmin' },
-  { username: 'zhangsan', password: '123456', name: '管理员', role: 'admin' },
-  { username: '13800138000', password: '123456', name: '教练李四', role: 'coach' },
-  { username: 'test@qq.com', password: '123456', name: '会员王五', role: 'member' }
-];
-
 // 自定义验证码校验规则
-const validateCaptcha = (rule, value, callback) => {
+const validateCaptcha = (_rule, value, callback) => {
   if (!value) {
     callback(new Error('请输入验证码'));
   } else if (value.toLowerCase() !== captchaText.value.toLowerCase()) {
@@ -71,39 +64,55 @@ const handleLogin = async () => {
   
   loginFormRef.value.validate(async (valid) => {
     if (valid) {
-      const user = mockUsers.find(
-        u => u.username === loginForm.username && u.password === loginForm.password
-      );
-
-      // const res = await userApi.login(loginForm.value)
-
-      if (user) {
-        ElMessage.success(`欢迎回来，${user.name}！`);
+      loading.value = true;
       
-        // 保存登录状态
-        localStorage.setItem('userInfo', JSON.stringify(user));
-        localStorage.setItem('token', 'mock-token-' + Date.now());
+      try {
+        // 调用后端登录接口
+        const res = await userApi.login({
+          username: loginForm.username,
+          password: loginForm.password
+        });
         
-        // 根据用户角色获取权限
-        const permissions = mockPermissions[user.role] || [];
-        console.log('用户权限:', permissions);
+        console.log('登录响应:', res);
         
-        // 转换为菜单结构
-        const menus = transformPermissionsToMenus(permissions);
-        console.log('生成的菜单:', menus);
+        // 登录成功
+        ElMessage.success(res.resMsg || '登录成功！');
         
-        // 保存到 store
-        permissionStore.setMenus(menus);
-        permissionStore.setPermissions(permissions.map(p => p.permission_code));
-        permissionStore.setUserInfo(user);
+        // 保存 token
+        if (res.result?.token) {
+          localStorage.setItem('token', res.result.token);
+        }
         
-        // 延迟跳转
+        // 保存用户信息（后端返回的是 user 不是 userInfo）
+        const user = res.result?.user;
+        if (user) {
+          localStorage.setItem('userInfo', JSON.stringify(user));
+          permissionStore.setUserInfo(user);
+          
+          // 使用后端返回的权限列表生成菜单
+          const permissions = user.permissions || [];
+          console.log('用户权限:', permissions);
+          
+          // 将权限字符串转换为菜单结构
+          // 根据权限代码匹配菜单配置
+          const menus = transformPermissionsToMenusByCode(permissions);
+          console.log('生成的菜单:', menus);
+          
+          permissionStore.setMenus(menus);
+          permissionStore.setPermissions(permissions);
+        }
+        
+        // 跳转到首页
         setTimeout(() => {
           router.push('/dashboard');
-        }, 1000);
-      } else {
-        ElMessage.error('用户名或密码错误');
+        }, 500);
+        
+      } catch (error) {
+        console.error('登录失败:', error);
+        ElMessage.error(error.message || '登录失败，请重试');
         refreshCaptcha();
+      } finally {
+        loading.value = false;
       }
     } else {
       ElMessage.warning('请检查表单填写是否正确');
@@ -185,10 +194,11 @@ const showForgotPassword = () => {
         <el-button
             type="primary"
             @click="handleLogin"
+            :loading="loading"
             class="main-btn"
             size="large"
         >
-          立即登录
+          {{ loading ? '登录中...' : '立即登录' }}
         </el-button>
 
         <div class="register-section">
