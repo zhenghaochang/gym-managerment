@@ -66,5 +66,12 @@ onMounted(() => {
   padding: 20px;
   background: #f5f7fa;
   overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.content-wrapper::-webkit-scrollbar {
+  display: none;
 }
 </style>

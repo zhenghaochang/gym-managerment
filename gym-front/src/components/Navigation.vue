@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { usePermissionStore } from '@/stores/permission';
+import { userApi } from '@/api/modules/user';
 
 const permissionStore = usePermissionStore();
 
@@ -67,14 +68,19 @@ const handleCommand = (command) => {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        // 清除登录状态
-        localStorage.removeItem('token');
-        localStorage.removeItem('userInfo');
-        
-        // 清除 store 中的权限信息
-        import('@/stores/permission').then(({ usePermissionStore }) => {
-          const permissionStore = usePermissionStore();
+      }).then(async () => {
+        try {
+          // 获取本地存储的用户信息
+          const localUser = JSON.parse(localStorage.getItem('userInfo') || '{}');
+          
+          // 调用后端退出接口，传用户 id
+          await userApi.logout({ id: localUser.id });
+          
+          // 清除登录状态
+          localStorage.removeItem('token');
+          localStorage.removeItem('userInfo');
+          
+          // 清除 store 中的权限信息
           permissionStore.clearPermission();
           
           ElMessage.success('退出成功');
@@ -83,7 +89,14 @@ const handleCommand = (command) => {
           setTimeout(() => {
             window.location.href = '/login';
           }, 500);
-        });
+        } catch (error) {
+          console.error('退出登录失败:', error);
+          // 即使接口失败，也清除本地状态
+          localStorage.removeItem('token');
+          localStorage.removeItem('userInfo');
+          permissionStore.clearPermission();
+          window.location.href = '/login';
+        }
       }).catch(() => {
         // 取消退出
       });

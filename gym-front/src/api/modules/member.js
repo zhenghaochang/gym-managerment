@@ -27,5 +27,10 @@ export const memberApi = {
   // 删除会员
   deleteMember(id) {
     return apiService.delete(`/member/${id}`)
+  },
+
+  // 获取会员卡种类列表
+  getCardList() {
+    return apiService.post('/card/list')
   }
 }
