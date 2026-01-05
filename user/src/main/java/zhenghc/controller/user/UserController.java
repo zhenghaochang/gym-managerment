@@ -2,13 +2,11 @@ package zhenghc.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import zhenghc.common.BaseConstants;
-import zhenghc.common.properties.JwtProperties;
 import zhenghc.common.util.JwtUtil;
 import zhenghc.common.util.RedisUtil;
 import zhenghc.entity.User;
@@ -19,8 +17,7 @@ import zhenghc.entity.vo.LoginVo;
 import zhenghc.mapper.UserMapper;
 import zhenghc.service.EmailCodeService;
 import zhenghc.service.MailService;
-import zhenghc.service.UserService;
-import zhenghc.service.impl.EmailCodeServiceImpl;
+import zhenghc.service.user.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,6 +100,13 @@ public class UserController {
             throw new RuntimeException("获取验证码失败");
         }
         return BaseResponse.success("验证码已发送");
+    }
+
+    @PostMapping("/logout")
+    public BaseResponse logout(@RequestBody User user){
+        Long userId = user.getId();
+        redisUtil.delete(BaseConstants.USER_ID_KEY+userId);
+        return BaseResponse.success(null);
     }
 
 }

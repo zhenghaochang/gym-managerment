@@ -1,4 +1,4 @@
-package zhenghc.service.impl;
+package zhenghc.service.impl.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import zhenghc.entity.dto.RegistUserDTO;
 import zhenghc.entity.vo.BaseResponse;
 import zhenghc.mapper.UserMapper;
 import zhenghc.service.EmailCodeService;
-import zhenghc.service.UserService;
+import zhenghc.service.user.UserService;
 
 import java.util.List;
 

@@ -45,10 +45,11 @@ public class JwtUtil {
      */
     public boolean isTokenExpired(String token) {
         try {
-            Claims claims = parseJwt(token,jwtProperties.getSecretKey());
+            Claims claims = parseJwt(jwtProperties.getSecretKey(),token);
             Date expiration = claims.getExpiration();
             return expiration.before(new Date());
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return true;
         }
     }
