@@ -35,7 +35,7 @@ export const userApi = {
   },
   
   // 退出登录
-  logout() {
-    return apiService.post('/user/logout')
+  logout(data) {
+    return apiService.post('/user/logout', data)
   }
 }

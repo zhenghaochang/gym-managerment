@@ -39,6 +39,13 @@ const routes = [
     component: () => import('@/views/system/Role.vue'),
     meta: { requiresAuth: true }
   },
+  // 办理会员卡
+  {
+    path: '/create-card',
+    name: 'CreateCard',
+    component: () => import('@/views/CreateCard.vue'),
+    meta: { requiresAuth: true }
+  },
   // 会员管理
   {
     path: '/member/list',

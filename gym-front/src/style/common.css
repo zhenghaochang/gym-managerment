@@ -1,5 +1,15 @@
 /* 公共样式 - 通用布局和容器 */
 
+/* 隐藏所有滚动条 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 /* 全屏容器 - 渐变背景 */
 .page-container {
   display: flex;
