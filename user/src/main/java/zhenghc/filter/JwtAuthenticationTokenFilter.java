@@ -39,7 +39,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             "/user/login",
             "/user/register",
             "/public/",
-            "/user/getEmailCode"
+            "/user/getEmailCode",
+            "/user/logout"
     };
 
     @Override

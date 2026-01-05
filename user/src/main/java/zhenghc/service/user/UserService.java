@@ -1,4 +1,4 @@
-package zhenghc.service;
+package zhenghc.service.user;
 
 import zhenghc.entity.User;
 import zhenghc.entity.dto.RegistUserDTO;

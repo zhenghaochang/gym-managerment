@@ -51,7 +51,7 @@ public class SecurityConfig {
                 // 配置请求权限
                 .authorizeRequests()
                 // 允许匿名访问的接口
-                .antMatchers("/user/login", "/user/register" , "/public/**", "/user/getEmailCode").anonymous()
+                .antMatchers("/user/login", "/user/register" , "/public/**", "/user/getEmailCode","/user/logout").anonymous()
                 // 其他所有请求都需要认证
                 .anyRequest().authenticated()
                 .and()
