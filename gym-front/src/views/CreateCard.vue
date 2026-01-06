@@ -54,10 +54,29 @@ onMounted(() => { fetchCardList() })
 
 const selectCard = (card) => { selectedCard.value = card }
 const handleBuy = (card) => { selectedCard.value = card; showPayDialog.value = true }
-const confirmPay = () => {
-  ElMessageBox.confirm(`确认支付 ¥${selectedCard.value.price} 购买${selectedCard.value.name}？`, '确认支付',
-    { confirmButtonText: '确认支付', cancelButtonText: '取消', type: 'info' }
-  ).then(() => { ElMessage.success('支付成功！会员卡已激活'); showPayDialog.value = false; selectedCard.value = null }).catch(() => {})
+const confirmPay = async () => {
+  try {
+    await ElMessageBox.confirm(`确认支付 ¥${selectedCard.value.price} 购买${selectedCard.value.name}？`, '确认支付',
+      { confirmButtonText: '确认支付', cancelButtonText: '取消', type: 'info' }
+    )
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    const res = await memberApi.createOrder({
+      userId: userInfo.id,
+      cardId: selectedCard.value.id,
+      paymentMethod: paymentMethod.value === 'alipay' ? 1 : 2
+    })
+    if (res.resCode === '00') {
+      ElMessage.success(res.result || '购买成功！会员卡已激活')
+      showPayDialog.value = false
+      selectedCard.value = null
+    } else {
+      ElMessage.error(res.resMsg || '购买失败')
+    }
+  } catch (e) {
+    if (e !== 'cancel') {
+      ElMessage.error('购买失败，请稍后重试')
+    }
+  }
 }
 </script>
 
