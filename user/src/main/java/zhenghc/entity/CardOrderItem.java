@@ -1,5 +1,6 @@
 package zhenghc.entity;
 
+import lombok.Builder;
 import zhenghc.common.BaseConstants;
 
 import java.math.BigDecimal;
@@ -95,4 +96,5 @@ public class CardOrderItem {
     public void setSubtotal(BigDecimal subtotal) {
         this.subtotal = subtotal;
     }
+
 }

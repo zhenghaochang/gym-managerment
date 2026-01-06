@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Builder
+
 public class CardOrderDTO {
 
     private Long id;
@@ -127,5 +127,13 @@ public class CardOrderDTO {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(Integer paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 }
