@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zhenghc.entity.Card;
+import zhenghc.entity.CardOrderItem;
 import zhenghc.entity.dto.CardDTO;
 import zhenghc.entity.dto.CardOrderDTO;
 import zhenghc.mapper.CardMapper;
+import zhenghc.mapper.CardOrderItemMapper;
 import zhenghc.mapper.CardOrderMapper;
 import zhenghc.service.user.CardService;
 
@@ -21,6 +23,8 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     private CardOrderMapper cardOrderMapper;
+    @Autowired
+    private CardOrderItemMapper cardOrderItemMapper;
 
     @Override
     public List<Card> getCardList() {
@@ -42,17 +46,26 @@ public class CardServiceImpl implements CardService {
         try{
             Card card = cardMapper.selectById(cardDTO.getCardId());
 
-            CardOrderDTO order = CardOrderDTO.builder()
-                    .orderNum(orderNum)
-                    .userId(cardDTO.getUserId())
-                    .orderAmount(card.getPrice())
-                    .paymentAmount(card.getPrice())
-                    .paymentMethod(cardDTO.getPaymentMethod())
-                    .paymentStatus(2)//支付成功
-                    .orderStatus(2)//已完成
-                    .paymentTime(new Date()).build();
+            CardOrderDTO order = new CardOrderDTO();
+            order.setOrderNum( orderNum);
+            order.setUserId(cardDTO.getUserId());
+            order.setOrderAmount(card.getPrice());
+            order.setPaymentAmount(card.getPrice());
+            order.setPaymentMethod(cardDTO.getPaymentMethod());
+            order.setOrderStatus(2);
+            order.setPaymentStatus(2);
+            order.setPaymentTime(new Date());
             cardOrderMapper.insert(order);
 
+            CardOrderItem cardItem = new CardOrderItem();
+            cardItem.setOrderId( order.getId());
+            cardItem.setProductId(cardDTO.getCardId());
+            cardItem.setProductType(1);
+            cardItem.setProductName(card.getCardName());
+            cardItem.setProductPrice(card.getPrice());
+            cardItem.setQuantity(1);
+            cardItem.setSubtotal(card.getPrice());
+            cardOrderItemMapper.insert(cardItem);
         } catch (Exception e) {
             throw new RuntimeException("支付失败:"+e.getMessage());
         }

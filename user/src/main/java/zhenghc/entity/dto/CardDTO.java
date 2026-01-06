@@ -1,13 +1,16 @@
 package zhenghc.entity.dto;
 
+import java.math.BigDecimal;
+
 public class CardDTO {
 
     private Long userId;
 
     private Long cardId;
 
+
     /**
-     * 支付方式
+     * 支付方式 1-支付宝 2-微信
      * */
     private Integer paymentMethod;
 

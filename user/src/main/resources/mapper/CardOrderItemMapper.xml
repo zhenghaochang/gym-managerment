@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zhenghc.mapper.CardOrderItemMapper">
+
+    <insert id="insert">
+        insert into card_order_item (order_id,product_type,product_id,product_name,product_price,quantity,subtotal)
+        value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="productType != null">#{productType},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="productName != null">#{productName},</if>
+            <if test="productPrice != null">#{productPrice},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="subtotal != null">#{subtotal}</if>
+        </trim>
+    </insert>
+</mapper>

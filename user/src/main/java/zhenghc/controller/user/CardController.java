@@ -37,7 +37,7 @@ public class CardController {
             throw new RuntimeException(e);
         }
 
-        return BaseResponse.success("创建订单成功");
+        return BaseResponse.success("购买成功");
     }
 
 }

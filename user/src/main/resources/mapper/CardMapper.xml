@@ -8,4 +8,7 @@
     <select id="selectList" resultType="zhenghc.entity.Card">
         select * from card_type
     </select>
+    <select id="selectById" resultType="zhenghc.entity.Card">
+        select * from card_type where id = #{cardId}
+    </select>
 </mapper>
