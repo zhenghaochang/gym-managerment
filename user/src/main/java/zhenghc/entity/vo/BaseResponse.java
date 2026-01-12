@@ -7,7 +7,7 @@ import java.io.Serializable;
 public class BaseResponse<T> implements Serializable {
 
     /**
-     * 00-成功 99-失败
+     * 00-成功 99-失败 11-用户权限非法
      * */
     private String resCode;
 
@@ -47,6 +47,13 @@ public class BaseResponse<T> implements Serializable {
     public static <T> BaseResponse<T> error (String resMsg) {
         BaseResponse<T> response = new BaseResponse<>();
         response.resCode = "99";
+        response.resMsg = resMsg;
+        return response;
+    }
+
+    public static <T> BaseResponse<T> error (String resCode ,String resMsg) {
+        BaseResponse<T> response = new BaseResponse<>();
+        response.resCode = resCode;
         response.resMsg = resMsg;
         return response;
     }

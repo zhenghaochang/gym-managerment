@@ -1,11 +1,14 @@
 package zhenghc.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import zhenghc.common.BaseConstants;
 import zhenghc.entity.Card;
+import zhenghc.entity.User;
 import zhenghc.entity.dto.CardDTO;
 import zhenghc.entity.vo.BaseResponse;
 import zhenghc.service.user.CardService;
@@ -31,13 +34,18 @@ public class CardController {
     @PostMapping("/createOrder")
     public BaseResponse createOrder(@RequestBody CardDTO cardDTO) {
 
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!cardDTO.getUserId().equals( user.getId())){
+            return BaseResponse.error( BaseConstants.resultCode.USER_ERROR,"用户权限非法");
+        }
+        BaseResponse baseResponse;
         try{
-            cardService.createOrder(cardDTO);
+            baseResponse = cardService.createOrder(cardDTO);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        return BaseResponse.success("购买成功");
+        return baseResponse;
     }
 
 }

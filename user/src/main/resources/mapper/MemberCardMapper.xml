@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zhenghc.mapper.MemberCardMapper">
+
+    <insert id="insert">
+        insert into gym.member_card
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="cardTypeId != null">card_type_id,</if>
+            <if test="cardNumber != null">card_number,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="remainingTimes != null">remaining_times,</if>
+            <if test="status != null">status,</if>
+            <if test="durationDays != null">duration_days,</if>
+            <if test="totalTimes != null">total_times,</if>
+        </trim>
+        value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="cardTypeId != null">#{cardTypeId},</if>
+            <if test="cardNumber != null">#{cardNumber},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="remainingTimes != null">#{remainingTimes},</if>
+            <if test="status != null">#{status},</if>
+            <if test="durationDays != null">#{durationDays},</if>
+            <if test="totalTimes != null">#{totalTimes},</if>
+        </trim>
+    </insert>
+    <select id="listByUserId" resultType="zhenghc.entity.MemberCard">
+        select * from gym.member_card where user_id = #{userId}
+    </select>
+    <select id="queryTimeCardByUserId" resultType="zhenghc.entity.MemberCard">
+        select * from gym.member_card
+        where
+            user_id = #{userId}
+            and
+            status = 1 or status = 2
+            and card_type_id = 1
+    </select>
+</mapper>
