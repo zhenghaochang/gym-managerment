@@ -11,4 +11,7 @@
     <select id="selectById" resultType="zhenghc.entity.Card">
         select * from card_type where id = #{cardId}
     </select>
+    <select id="selectAllTypes" resultType="java.lang.String">
+        select card_name , card_category from gym.card_type;
+    </select>
 </mapper>

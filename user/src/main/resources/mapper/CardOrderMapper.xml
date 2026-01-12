@@ -6,7 +6,17 @@
 <mapper namespace="zhenghc.mapper.CardOrderMapper">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into card_order(order_num,user_id,order_amount,payment_amount,payment_method,payment_status,order_status,payment_time)
+        insert into card_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNum != null">order_num,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="orderAmount != null">order_amount,</if>
+            <if test="paymentAmount != null">payment_amount,</if>
+            <if test="paymentMethod != null">payment_method,</if>
+            <if test="paymentStatus != null">payment_status,</if>
+            <if test="orderStatus != null">order_status,</if>
+            <if test="paymentTime != null">payment_time</if>
+        </trim>
         value
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="orderNum != null">#{orderNum},</if>

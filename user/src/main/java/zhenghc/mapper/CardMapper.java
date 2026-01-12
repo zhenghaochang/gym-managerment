@@ -10,4 +10,6 @@ public interface CardMapper {
     List<Card> selectList();
 
     Card selectById(Long cardId);
+
+    List<Card> selectAllTypes();
 }
