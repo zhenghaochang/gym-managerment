@@ -46,6 +46,13 @@ const routes = [
     component: () => import('@/views/CreateCard.vue'),
     meta: { requiresAuth: true }
   },
+  // 我的会员卡
+  {
+    path: '/my-card',
+    name: 'MyCard',
+    component: () => import('@/views/MyCard.vue'),
+    meta: { requiresAuth: true }
+  },
   // 会员管理
   {
     path: '/member/list',

@@ -37,5 +37,10 @@ export const memberApi = {
   // 购买会员卡
   createOrder(data) {
     return apiService.post('/card/createOrder', data)
+  },
+
+  // 获取我的会员卡列表
+  getMyCardList(data) {
+    return apiService.post('/myCard/list', data)
   }
 }
