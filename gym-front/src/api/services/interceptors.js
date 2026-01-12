@@ -32,14 +32,12 @@ export function setupInterceptors(service, serviceName = '服务') {
       console.log(`[${serviceName}] 响应:`, response.config.url, res)
       
       // 根据后端返回格式：{ resCode: "00", resMsg: "", result: T }
-      // resCode: "00"-成功 "99"-失败
-      if (res.resCode === '00') {
-        return res
-      } else {
-        // 业务错误
+      // resCode: "99"-失败，其他都正常返回给页面处理
+      if (res.resCode === '99') {
         ElMessage.error(res.resMsg || '请求失败')
         return Promise.reject(new Error(res.resMsg || '请求失败'))
       }
+      return res
     },
     error => {
       console.error(`[${serviceName}] 响应错误:`, error)

@@ -69,6 +69,8 @@ const confirmPay = async () => {
       ElMessage.success(res.result || '购买成功！会员卡已激活')
       showPayDialog.value = false
       selectedCard.value = null
+    } else if (res.resCode === '01') {
+      ElMessage.error('购买失败，用户已存在在使用中的时长卡')
     } else {
       ElMessage.error(res.resMsg || '购买失败')
     }
@@ -96,6 +98,7 @@ const confirmPay = async () => {
         <div class="section-header">
           <el-icon class="section-icon"><Timer /></el-icon>
           <h2 class="section-title">时长卡</h2>
+          <span class="duration-tip"><el-icon><Warning /></el-icon>当已存在可使用的时长卡时无法再购买时长卡，直至时长卡过期或将其转出为止</span>
           <span class="section-desc">按天计费，畅享无限次入场</span>
         </div>
         <div class="card-list">
@@ -189,10 +192,11 @@ const confirmPay = async () => {
 .header-tags .tag { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #f5f5f5; border: 1px solid #eee; border-radius: 4px; font-size: 13px; color: #666; font-weight: 600; }
 .cards-wrapper { margin-bottom: 40px; }
 .card-section { margin-bottom: 40px; padding: 24px; background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%); border-radius: 16px; border: 1px solid #e0e0e0; }
-.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #1a1a2e; }
-.section-icon { font-size: 32px; color: #ff0844; }
+.section-header { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #1a1a2e; }
+.section-icon { font-size: 32px; color: #ff0844; align-self: center; }
 .section-title { font-size: 28px; font-weight: 900; color: #1a1a2e; margin: 0; letter-spacing: 2px; text-transform: uppercase; }
-.section-desc { font-size: 14px; color: #666; margin-left: auto; }
+.section-desc { font-size: 14px; color: #666; margin-left: auto; align-self: center; }
+.duration-tip { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; color: #faad14; margin-left: 12px; }
 .card-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; min-height: 100px; }
 @media (max-width: 1200px) { .card-list { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) { .card-list { grid-template-columns: 1fr; } }

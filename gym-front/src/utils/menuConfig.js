@@ -34,7 +34,8 @@ export const menuIconMap = {
   'member:order': 'ShoppingCart',
   
   'member:create-card': 'CreditCard',
-  'course:purchase': 'ShoppingCart'
+  'course:purchase': 'ShoppingCart',
+  'course:my-card': 'Postcard'
 }
 
 // 菜单配置（权限代码 -> 菜单信息）
@@ -49,6 +50,7 @@ export const menuConfig = {
   // 会员独立菜单（无父级）
   'member:create-card': { title: '办理会员卡', path: '/create-card', icon: 'CreditCard', parent: null, sort: 8 },
   'course:purchase': { title: '购买课程', path: '/purchase-course', icon: 'ShoppingCart', parent: null, sort: 9 },
+  'course:my-card': { title: '我的会员卡', path: '/my-card', icon: 'Postcard', parent: null, sort: 10 },
   
   // 系统管理
   'system:manage': { title: '系统管理', path: '/system', icon: 'Setting', parent: null, sort: 1 },
