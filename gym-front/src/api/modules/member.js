@@ -57,5 +57,10 @@ export const memberApi = {
   // 审批申请单
   approveApplication(data) {
     return apiService.post('/userManager/application/approval', data)
+  },
+
+  // 获取课程列表
+  getCourseList() {
+    return apiService.post('/course/list')
   }
 }

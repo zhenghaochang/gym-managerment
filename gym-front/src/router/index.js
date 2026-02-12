@@ -53,6 +53,13 @@ const routes = [
     component: () => import('@/views/MyCard.vue'),
     meta: { requiresAuth: true }
   },
+  // 购买课程
+  {
+    path: '/purchase-course',
+    name: 'PurchaseCourse',
+    component: () => import('@/views/PurchaseCourse.vue'),
+    meta: { requiresAuth: true }
+  },
   // 会员管理
   {
     path: '/member/list',
