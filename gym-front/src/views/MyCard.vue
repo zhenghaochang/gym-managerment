@@ -127,10 +127,6 @@ const formatDate = (dateStr) => {
   if (!dateStr) return ''
   return dateStr.split(' ')[0]
 }
-
-const handleRenew = () => {
-  ElMessage.info('续费功能开发中')
-}
 </script>
 
 <template>
@@ -268,7 +264,6 @@ const handleRenew = () => {
               </div>
               <div class="card-footer">
                 <div class="card-date">{{ card.endTime ? `已于 ${formatDate(card.endTime)} 到期` : `购买于 ${formatDate(card.createTime)}` }}</div>
-                <el-button size="small" type="primary" @click="handleRenew">续费</el-button>
               </div>
             </div>
           </div>
