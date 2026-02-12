@@ -48,10 +48,28 @@ public class MyCardController {
             return BaseResponse.error(BaseConstants.resultCode.BUSINESS_ERROR, "用户无可用会员卡");
         }
 
+        //判断会员卡是否过期
+        List<MemberCard> newList = list.stream().filter(x -> {
+            if(x.getEndTime() != null && x.getEndTime().before(new Date())){
+                x.setStatus(3);
+            }
+            if(x.getRemainingTimes() != null && x.getRemainingTimes() <= 0){
+                x.setStatus(4);
+            }
+            return true;
+        }).collect(Collectors.toList());
 
+        //将过期的会员卡批量更新到表中
+        List<MemberCard> updateList = newList.stream().filter(x -> {
+            if(x.getStatus() == 3 || x.getStatus() == 4){
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
 
+        memberCardMapper.updateStatusBatch(updateList);
 
-        return BaseResponse.success("获取成功", list);
+        return BaseResponse.success("获取成功", newList);
     }
 
     /**

@@ -20,4 +20,6 @@ public interface MemberCardMapper {
      * 根据卡号冻结
      * */
     void updateStopByCardNum(String cardNum, Integer remainingDays);
+
+    void updateStatusBatch(List<MemberCard> list);
 }
