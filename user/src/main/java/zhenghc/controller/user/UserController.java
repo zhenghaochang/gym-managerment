@@ -12,7 +12,7 @@ import zhenghc.common.util.RedisUtil;
 import zhenghc.entity.User;
 import zhenghc.entity.dto.LoginDTO;
 import zhenghc.entity.dto.RegistUserDTO;
-import zhenghc.entity.vo.BaseResponse;
+import zhenghc.common.resp.BaseResponse;
 import zhenghc.entity.vo.LoginVo;
 import zhenghc.mapper.UserMapper;
 import zhenghc.service.EmailCodeService;

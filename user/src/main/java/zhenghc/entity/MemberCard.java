@@ -41,7 +41,17 @@ public class MemberCard {
 
     private Integer durationDays;
 
+    private Integer remainingDays;
+
     private Integer totalTimes;
+
+    public Integer getTotalTimes() {
+        return totalTimes;
+    }
+
+    public void setTotalTimes(Integer totalTimes) {
+        this.totalTimes = totalTimes;
+    }
 
     public Integer getDurationDays() {
         return durationDays;
@@ -51,12 +61,12 @@ public class MemberCard {
         this.durationDays = durationDays;
     }
 
-    public Integer getTotalTimes() {
-        return totalTimes;
+    public Integer getRemainingDays() {
+        return remainingDays;
     }
 
-    public void setTotalTimes(Integer totalTimes) {
-        this.totalTimes = totalTimes;
+    public void setRemainingDays(Integer remainingDays) {
+        this.remainingDays = remainingDays;
     }
 
     public Long getId() {

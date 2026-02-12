@@ -10,7 +10,7 @@ import zhenghc.common.BaseConstants;
 import zhenghc.entity.Card;
 import zhenghc.entity.User;
 import zhenghc.entity.dto.CardDTO;
-import zhenghc.entity.vo.BaseResponse;
+import zhenghc.common.resp.BaseResponse;
 import zhenghc.service.user.CardService;
 
 import java.util.List;

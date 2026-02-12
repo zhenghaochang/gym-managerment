@@ -2,7 +2,7 @@ package zhenghc.service.user;
 
 import zhenghc.entity.Card;
 import zhenghc.entity.dto.CardDTO;
-import zhenghc.entity.vo.BaseResponse;
+import zhenghc.common.resp.BaseResponse;
 
 import java.util.List;
 

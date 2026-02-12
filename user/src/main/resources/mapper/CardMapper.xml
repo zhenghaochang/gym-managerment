@@ -14,4 +14,7 @@
     <select id="selectAllTypes" resultType="java.lang.String">
         select card_name , card_category from gym.card_type;
     </select>
+    <select id="selectIdByType" resultType="java.lang.Long">
+        select id from gym.card_type where card_category = #{category}
+    </select>
 </mapper>

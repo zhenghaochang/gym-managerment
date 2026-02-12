@@ -12,4 +12,6 @@ public interface CardMapper {
     Card selectById(Long cardId);
 
     List<Card> selectAllTypes();
+
+    List<Long> selectIdByType(int category);
 }
