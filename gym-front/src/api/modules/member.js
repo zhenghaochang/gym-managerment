@@ -42,5 +42,20 @@ export const memberApi = {
   // 获取我的会员卡列表
   getMyCardList(data) {
     return apiService.post('/myCard/list', data)
+  },
+
+  // 申请停卡/转卡
+  appApproval(data) {
+    return apiService.post('/myCard/appApproval', data)
+  },
+
+  // 获取申请单列表
+  getApplicationList(data) {
+    return apiService.post('/userManager/application/list', data)
+  },
+
+  // 审批申请单
+  approveApplication(data) {
+    return apiService.post('/userManager/application/approval', data)
   }
 }

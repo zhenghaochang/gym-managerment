@@ -60,6 +60,12 @@ const routes = [
     component: () => import('@/views/member/List.vue'),
     meta: { requiresAuth: true }
   },
+  {
+    path: '/member/application',
+    name: 'ApplicationApproval',
+    component: () => import('@/views/ApplicationApproval.vue'),
+    meta: { requiresAuth: true }
+  },
   // 更多路由...
 ]
 

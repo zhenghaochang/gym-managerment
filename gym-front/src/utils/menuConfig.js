@@ -9,6 +9,7 @@ export const menuIconMap = {
   'member:manage': 'User',
   'member:list': 'List',
   'card:manage': 'CreditCard',
+  'member:application': 'DocumentChecked',
   
   'course:manage': 'Reading',
   'course:setting': 'Setting',
@@ -63,6 +64,7 @@ export const menuConfig = {
   'member:manage': { title: '会员管理', path: '/member', icon: 'User', parent: null, sort: 2 },
   'member:list': { title: '会员信息', path: '/member/list', icon: 'List', parent: 'member:manage', sort: 10 },
   'card:manage': { title: '办卡续费', path: '/member/card', icon: 'CreditCard', parent: 'member:manage', sort: 20 },
+  'member:application': { title: '申请审批', path: '/member/application', icon: 'DocumentChecked', parent: 'member:manage', sort: 30 },
   
   // 课程管理
   'course:manage': { title: '课程管理', path: '/course', icon: 'Reading', parent: null, sort: 3 },
@@ -177,6 +179,7 @@ export const mockPermissions = {
     { id: 6, permission_name: '会员管理', permission_code: 'member:manage', resource_type: 'menu', url: '/member', parent_id: 0, sort_order: 2 },
     { id: 7, permission_name: '会员信息', permission_code: 'member:list', resource_type: 'menu', url: '/member/list', parent_id: 6, sort_order: 10 },
     { id: 8, permission_name: '办卡续费', permission_code: 'card:manage', resource_type: 'menu', url: '/member/card', parent_id: 6, sort_order: 20 },
+    { id: 27, permission_name: '申请审批', permission_code: 'member:application', resource_type: 'menu', url: '/member/application', parent_id: 6, sort_order: 30 },
     
     { id: 9, permission_name: '课程管理', permission_code: 'course:manage', resource_type: 'menu', url: '/course', parent_id: 0, sort_order: 3 },
     { id: 10, permission_name: '课程设置', permission_code: 'course:setting', resource_type: 'menu', url: '/course/setting', parent_id: 9, sort_order: 10 },
@@ -197,6 +200,7 @@ export const mockPermissions = {
     { id: 6, permission_name: '会员管理', permission_code: 'member:manage', resource_type: 'menu', url: '/member', parent_id: 0, sort_order: 2 },
     { id: 7, permission_name: '会员信息', permission_code: 'member:list', resource_type: 'menu', url: '/member/list', parent_id: 6, sort_order: 10 },
     { id: 8, permission_name: '办卡续费', permission_code: 'card:manage', resource_type: 'menu', url: '/member/card', parent_id: 6, sort_order: 20 },
+    { id: 27, permission_name: '申请审批', permission_code: 'member:application', resource_type: 'menu', url: '/member/application', parent_id: 6, sort_order: 30 },
     
     { id: 9, permission_name: '课程管理', permission_code: 'course:manage', resource_type: 'menu', url: '/course', parent_id: 0, sort_order: 3 },
     { id: 10, permission_name: '课程设置', permission_code: 'course:setting', resource_type: 'menu', url: '/course/setting', parent_id: 9, sort_order: 10 },
