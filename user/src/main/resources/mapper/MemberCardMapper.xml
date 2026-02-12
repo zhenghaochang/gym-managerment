@@ -31,6 +31,9 @@
             <if test="totalTimes != null">#{totalTimes},</if>
         </trim>
     </insert>
+    <update id="updateStopByCardNum">
+        update gym.member_card set status = 2 , remaining_days = #{remainingDays} where card_number = #{cardNum}
+    </update>
     <select id="listByUserId" resultType="zhenghc.entity.MemberCard">
         select * from gym.member_card where user_id = #{userId}
     </select>
@@ -41,5 +44,8 @@
             and
             status = 1 or status = 2
             and card_type_id = 1
+    </select>
+    <select id="selectByCardNum" resultType="zhenghc.entity.MemberCard">
+        select * from gym.member_card where card_number = #{cardNum}
     </select>
 </mapper>

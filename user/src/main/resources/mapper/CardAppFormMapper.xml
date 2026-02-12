@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zhenghc.mapper.CardAppFormMapper">
+
+    <insert id="insert">
+        insert into card_application_form (card_num,app_type,status,form_num,app_reason,real_name)
+        value
+        (#{cardNum},#{appType},#{status},#{formNum},#{appReason},#{realName})
+    </insert>
+    <update id="updateStatusByCardNum">
+        update gym.card_application_form set status = #{status} where card_num = #{cardNum}
+    </update>
+    <select id="selectBystatus" resultType="zhenghc.entity.CardAppForm">
+        select * from gym.card_application_form 
+        where card_num = #{cardNum} and app_type = #{appType} and status = #{status}
+    </select>
+    <select id="selectList" resultType="zhenghc.entity.CardAppForm">
+        select * from gym.card_application_form
+        <where>
+            <if test="realName != null and realName != ''">real_name = #{realName}</if>
+            <if test="appType != null">app_type = #{appType}</if>
+            <if test="status != null">status = #{status}</if>
+        </where>
+    </select>
+</mapper>

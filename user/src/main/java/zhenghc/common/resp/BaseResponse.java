@@ -1,4 +1,4 @@
-package zhenghc.entity.vo;
+package zhenghc.common.resp;
 
 
 import java.io.Serializable;
