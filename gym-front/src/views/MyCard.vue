@@ -128,18 +128,6 @@ const formatDate = (dateStr) => {
   return dateStr.split(' ')[0]
 }
 
-const handleStopCard = () => {
-  ElMessageBox.confirm('申请停卡后，剩余时长将暂停计算，确定申请吗？', '申请停卡', { type: 'warning' })
-    .then(() => ElMessage.success('停卡申请已提交'))
-    .catch(() => {})
-}
-
-const handleTransferCard = () => {
-  ElMessageBox.confirm('转卡需要支付手续费，确定申请吗？', '申请转卡', { type: 'warning' })
-    .then(() => ElMessage.success('转卡申请已提交'))
-    .catch(() => {})
-}
-
 const handleRenew = () => {
   ElMessage.info('续费功能开发中')
 }
@@ -219,10 +207,6 @@ const handleRenew = () => {
               </div>
               <div class="card-footer">
                 <div class="card-date">到期：{{ formatDate(card.endTime) }}</div>
-                <div class="card-actions">
-                  <el-button size="small" text @click="handleStopCard">申请停卡</el-button>
-                  <el-button size="small" text @click="handleTransferCard">申请转卡</el-button>
-                </div>
               </div>
             </div>
           </div>
@@ -258,10 +242,6 @@ const handleRenew = () => {
               </div>
               <div class="card-footer">
                 <div class="card-date">购买于 {{ formatDate(card.createTime) }}</div>
-                <div class="card-actions">
-                  <el-button size="small" text @click="handleStopCard">申请停卡</el-button>
-                  <el-button size="small" text @click="handleTransferCard">申请转卡</el-button>
-                </div>
               </div>
             </div>
           </div>
