@@ -25,6 +25,7 @@ const fetchCourseList = async () => {
         coach: course.coachName,
         coachId: course.coachId,
         status: course.status,
+        price: course.price || 0,
         image: course.coverImage || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400'
       }))
     } else {
@@ -89,12 +90,11 @@ const filteredCourses = computed(() => {
   
   // 按关键词搜索
   if (searchKeyword.value) {
-    const keyword = searchKeyword.value.toLowerCase()
+    const keyword = searchKeyword.value.toLowerCase().trim()
     result = result.filter(c => 
       c.courseName.toLowerCase().includes(keyword) ||
       c.description.toLowerCase().includes(keyword) ||
-      c.coach.toLowerCase().includes(keyword) ||
-      c.tags.some(tag => tag.toLowerCase().includes(keyword))
+      c.coach.toLowerCase().includes(keyword)
     )
   }
   
@@ -110,19 +110,39 @@ const handlePurchase = async (course) => {
   }
   
   try {
+    // 直接确认购买
     await ElMessageBox.confirm(
-      `确认购买 ${course.courseName} 吗？<br/>
-      <div style="margin-top: 12px; padding: 12px; background: #f5f7fa; border-radius: 4px;">
-        <div style="color: #606266; font-size: 13px; line-height: 1.8;">
-          <div>课程类型：${course.courseType}</div>
-          <div>课程时长：${course.duration}分钟</div>
-          <div>授课教练：${course.coach}</div>
-          ${course.difficultyLevel ? `<div>难度等级：${getDifficultyText(course.difficultyLevel)}</div>` : ''}
-          <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #dcdfe6;">
-            <span style="font-size: 14px; font-weight: 600; color: #303133;">课程容量：</span>
-            <span style="font-size: 14px; font-weight: 600; color: #409eff;">${course.capacity}人</span>
+      `<div style="padding: 8px 0;">
+        <div style="margin-bottom: 20px; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: #fff;">
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${course.courseName}</div>
+          <div style="font-size: 13px; opacity: 0.9;">
+            ${course.courseType} · ${course.coach} · ${course.duration}分钟
+            ${course.difficultyLevel ? ` · ${getDifficultyText(course.difficultyLevel)}` : ''}
           </div>
         </div>
+        
+        <div style="padding: 16px; background: #f5f7fa; border-radius: 8px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="color: #606266; font-size: 14px;">课程单价：</span>
+            <span style="color: #ff0844; font-size: 20px; font-weight: 700;">¥${course.price}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #606266; font-size: 14px;">购买数量：</span>
+            <span style="color: #303133; font-size: 16px; font-weight: 600;">1 节</span>
+          </div>
+        </div>
+        
+        ${course.courseType === '团课' ? `
+        <div style="padding: 12px 16px; background: #e8f4ff; border-radius: 8px; border-left: 3px solid #409eff;">
+          <div style="display: flex; align-items: center; gap: 8px; color: #409eff; font-size: 13px;">
+            <svg style="width: 16px; height: 16px;" viewBox="0 0 1024 1024" fill="currentColor">
+              <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"/>
+              <path d="M464 336a48 48 0 1 0 96 0 48 48 0 1 0-96 0zm72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z"/>
+            </svg>
+            <span>课程容量：${course.capacity}人/节</span>
+          </div>
+        </div>
+        ` : ''}
       </div>`,
       '确认购买',
       {
@@ -133,13 +153,43 @@ const handlePurchase = async (course) => {
       }
     )
     
-    // TODO: 调用后端购买接口
-    ElMessage.success('购买成功！')
+    // 执行购买，数量固定为1
+    await executePurchase(course, 1)
   } catch (error) {
-    if (error !== 'cancel') {
-      console.error('购买失败:', error)
-      ElMessage.error('购买失败')
+    // 用户取消
+  }
+}
+
+// 执行购买逻辑
+const executePurchase = async (course, purchaseQuantity) => {
+  try {
+    // 获取用户信息
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    
+    // 计算金额
+    const totalAmount = course.price * purchaseQuantity
+    
+    // 调用购买接口
+    const res = await memberApi.buyCourse({
+      orderAmount: totalAmount,
+      paymentAmount: totalAmount,
+      paymentMethod: 2, // 支付方式：1=支付宝，2=微信
+      courseId: course.id,
+      courseName: course.courseName,
+      quantity: purchaseQuantity,
+      productPrice: course.price,
+      userId: userInfo.id,
+      userRealName: userInfo.realName || userInfo.username || ''
+    })
+    
+    if (res.resCode === '00') {
+      ElMessage.success('购买成功！')
+    } else {
+      ElMessage.error(res.resMsg || '购买失败')
     }
+  } catch (error) {
+    console.error('购买失败:', error)
+    ElMessage.error('购买失败，请稍后重试')
   }
 }
 
@@ -166,6 +216,10 @@ const handleViewDetail = (course) => {
         <div>
           <div style="color: #909399; font-size: 12px; margin-bottom: 6px;">课程时长</div>
           <div style="color: #606266; font-size: 14px;">${course.duration}分钟</div>
+        </div>
+        <div>
+          <div style="color: #909399; font-size: 12px; margin-bottom: 6px;">课程价格</div>
+          <div style="color: #ff0844; font-size: 18px; font-weight: 700;">¥${course.price}/节</div>
         </div>
         <div>
           <div style="color: #909399; font-size: 12px; margin-bottom: 6px;">课程容量</div>
@@ -271,6 +325,11 @@ const handleViewDetail = (course) => {
                 </div>
               </div>
               <div class="course-footer">
+                <div class="course-price">
+                  <span class="price-label">¥</span>
+                  <span class="price-value">{{ course.price }}</span>
+                  <span class="price-unit">/节</span>
+                </div>
                 <div class="course-actions">
                   <el-button size="small" @click="handleViewDetail(course)" :disabled="course.status === '0'">详情</el-button>
                   <el-button size="small" type="primary" @click="handlePurchase(course)" :disabled="course.status === '0'">
@@ -320,7 +379,12 @@ const handleViewDetail = (course) => {
                   <span>{{ course.duration }}分钟</span>
                 </div>
               </div>
-              <div class="course-footer">
+              <div class="course-footer" :class="{ 'with-capacity': true }">
+                <div class="course-price">
+                  <span class="price-label">¥</span>
+                  <span class="price-value">{{ course.price }}</span>
+                  <span class="price-unit">/节</span>
+                </div>
                 <div class="course-capacity">
                   <el-icon><UserFilled /></el-icon>
                   <span>{{ course.capacity }}人</span>
@@ -566,12 +630,35 @@ const handleViewDetail = (course) => {
 
 .course-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
 
 .course-footer.with-capacity {
   justify-content: space-between;
+}
+
+.course-price {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.price-label {
+  font-size: 14px;
+  color: #ff0844;
+  font-weight: 600;
+}
+
+.price-value {
+  font-size: 22px;
+  color: #ff0844;
+  font-weight: 900;
+}
+
+.price-unit {
+  font-size: 12px;
+  color: #909399;
 }
 
 .course-capacity {

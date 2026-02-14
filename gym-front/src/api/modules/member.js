@@ -62,5 +62,10 @@ export const memberApi = {
   // 获取课程列表
   getCourseList() {
     return apiService.post('/course/list')
+  },
+
+  // 购买课程
+  buyCourse(data) {
+    return apiService.post('/course/buyCourse', data)
   }
 }
