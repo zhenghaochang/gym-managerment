@@ -1,5 +1,7 @@
 package zhenghc.entity;
 
+import java.math.BigDecimal;
+
 public class Course {
 
     private Long id;
@@ -39,6 +41,11 @@ public class Course {
      * 状态：0-下架 1-上架
      * */
     private String status;
+
+    /**
+     * 单价
+     * */
+    private BigDecimal price;
 
     public Long getId() {
         return id;
@@ -118,5 +125,13 @@ public class Course {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }
