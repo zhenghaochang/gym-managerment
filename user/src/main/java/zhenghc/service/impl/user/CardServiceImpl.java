@@ -6,15 +6,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import zhenghc.common.BaseConstants;
 import zhenghc.entity.Card;
-import zhenghc.entity.CardOrderItem;
+import zhenghc.entity.OrderItem;
 import zhenghc.entity.MemberCard;
 import zhenghc.entity.dto.CardDTO;
 import zhenghc.entity.dto.CardOrderDTO;
 import zhenghc.common.resp.BaseResponse;
 import zhenghc.mapper.CardMapper;
-import zhenghc.mapper.CardOrderItemMapper;
-import zhenghc.mapper.CardOrderMapper;
+import zhenghc.mapper.OrderMapper;
 import zhenghc.mapper.MemberCardMapper;
+import zhenghc.mapper.OrderItemMapper;
 import zhenghc.service.user.CardService;
 
 import java.util.Date;
@@ -27,9 +27,9 @@ public class CardServiceImpl implements CardService {
     private CardMapper cardMapper;
 
     @Autowired
-    private CardOrderMapper cardOrderMapper;
+    private OrderMapper orderMapper;
     @Autowired
-    private CardOrderItemMapper cardOrderItemMapper;
+    private OrderItemMapper orderItemMapper;
     @Autowired
     private MemberCardMapper  memberCardMapper;
 
@@ -62,9 +62,9 @@ public class CardServiceImpl implements CardService {
             order.setOrderStatus(2);
             order.setPaymentStatus(2);
             order.setPaymentTime(new Date());
-            cardOrderMapper.insert(order);
+            orderMapper.insert(order);
 
-            CardOrderItem cardItem = new CardOrderItem();
+            OrderItem cardItem = new OrderItem();
             cardItem.setOrderId( order.getId());
             cardItem.setProductId(cardDTO.getCardId());
             cardItem.setProductType(1);
@@ -72,7 +72,7 @@ public class CardServiceImpl implements CardService {
             cardItem.setProductPrice(card.getPrice());
             cardItem.setQuantity(1);
             cardItem.setSubtotal(card.getPrice());
-            cardOrderItemMapper.insert(cardItem);
+            orderItemMapper.insert(cardItem);
 
             //当购买会员卡类型为时长卡时，查询用户是否有为过期的时长卡，存在则无法购买
             if(card.getCardCategory().equals("1")){

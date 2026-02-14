@@ -1,17 +1,19 @@
-package zhenghc.entity;
+package zhenghc.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import zhenghc.entity.MemberCourse;
+import zhenghc.entity.Order;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Order {
+public class MemberCourseDTO extends MemberCourse {
 
     private Long id;
 
     private String orderNum;
 
-    private Long userId;
+//    private Long userId;
 
     /**
      * 订单金额
@@ -44,11 +46,27 @@ public class Order {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date paymentTime;
 
+    /**
+     * 商品单价
+     * */
+    private BigDecimal productPrice;
 
+    private Integer quantity;
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -61,13 +79,15 @@ public class Order {
         this.orderNum = orderNum;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+//    @Override
+//    public Long getUserId() {
+//        return userId;
+//    }
+//
+//    @Override
+//    public void setUserId(Long userId) {
+//        this.userId = userId;
+//    }
 
     public BigDecimal getOrderAmount() {
         return orderAmount;
@@ -115,5 +135,13 @@ public class Order {
 
     public void setPaymentTime(Date paymentTime) {
         this.paymentTime = paymentTime;
+    }
+
+    public BigDecimal getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(BigDecimal productPrice) {
+        this.productPrice = productPrice;
     }
 }
