@@ -60,6 +60,13 @@ const routes = [
     component: () => import('@/views/PurchaseCourse.vue'),
     meta: { requiresAuth: true }
   },
+  // 我的课程
+  {
+    path: '/member/myCourse',
+    name: 'MyCourse',
+    component: () => import('@/views/MyCourse.vue'),
+    meta: { requiresAuth: true }
+  },
   // 会员管理
   {
     path: '/member/list',
