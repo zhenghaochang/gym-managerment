@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Reading } from '@element-plus/icons-vue'
+import { memberApi } from '@/api/modules/member'
 
 const loading = ref(false)
 const tableData = ref([])
@@ -12,6 +13,12 @@ const statusMap = {
   1: '待签到',
   2: '已签到',
   3: '已退课'
+}
+
+// 课程类型映射
+const courseTypeMap = {
+  1: '团课',
+  2: '私教课'
 }
 
 // 搜索表单
@@ -34,95 +41,61 @@ const statusOptions = [
   { label: '已退课', value: 3 }
 ]
 
-// 模拟数据
-const mockData = [
-  {
-    id: 1,
-    orderNum: 'CO202602120001',
-    courseName: '私教课-增肌',
-    courseType: 2,
-    courseTypeName: '私教课',
-    coach: '陈静',
-    duration: 90,
-    price: 300,
-    purchaseDate: '2026-02-10 14:30:00',
-    status: 1,
-    statusName: '待签到'
-  },
-  {
-    id: 2,
-    orderNum: 'CO202602110001',
-    courseName: '瑜伽',
-    courseType: 1,
-    courseTypeName: '团课',
-    coach: '陈静',
-    duration: 60,
-    price: 250,
-    purchaseDate: '2026-02-09 10:20:00',
-    signInDate: '2026-02-11 18:00:00',
-    status: 2,
-    statusName: '已签到'
-  },
-  {
-    id: 3,
-    orderNum: 'CO202602080001',
-    courseName: '动感单车',
-    courseType: 1,
-    courseTypeName: '团课',
-    coach: '刘强',
-    duration: 60,
-    price: 250,
-    purchaseDate: '2026-02-08 16:45:00',
-    status: 1,
-    statusName: '待签到'
-  },
-  {
-    id: 4,
-    orderNum: 'CO202601250001',
-    courseName: '力量训练',
-    courseType: 1,
-    courseTypeName: '团课',
-    coach: '刘强',
-    duration: 90,
-    price: 250,
-    purchaseDate: '2026-01-25 09:15:00',
-    refundDate: '2026-01-26 10:30:00',
-    refundReason: '临时有事无法参加',
-    status: 3,
-    statusName: '已退课'
-  }
-]
+// 全量数据（用于前端筛选）
+const allData = ref([])
+
+// 格式化时间
+const formatTime = (isoStr) => {
+  if (!isoStr) return ''
+  const d = new Date(isoStr)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
 
 // 获取课程列表
 const fetchCourseList = async () => {
   loading.value = true
   try {
-    // TODO: 对接后端接口
-    setTimeout(() => {
-      let filtered = [...mockData]
-      if (searchForm.value.courseName) {
-        filtered = filtered.filter(item =>
-          item.courseName.includes(searchForm.value.courseName)
-        )
-      }
-      if (searchForm.value.status !== '') {
-        filtered = filtered.filter(item => item.status === searchForm.value.status)
-      }
-      tableData.value = filtered
-      total.value = filtered.length
-      loading.value = false
-    }, 300)
+    const res = await memberApi.getMyCourseList()
+    if (res.resCode === '00') {
+      allData.value = (res.result || []).map(item => ({
+        ...item,
+        courseTypeName: courseTypeMap[item.courseType] || '未知',
+        statusName: statusMap[item.status] || '未知',
+        purchaseDate: formatTime(item.paymentTime)
+      }))
+      filterData()
+    } else {
+      ElMessage.error(res.resMsg || '获取课程列表失败')
+    }
   } catch (error) {
     console.error('获取课程列表失败:', error)
     ElMessage.error('获取课程列表失败')
+  } finally {
     loading.value = false
   }
+}
+
+// 前端筛选
+const filterData = () => {
+  let filtered = [...allData.value]
+  if (searchForm.value.courseName) {
+    filtered = filtered.filter(item =>
+      item.courseName.includes(searchForm.value.courseName)
+    )
+  }
+  if (searchForm.value.status !== '') {
+    filtered = filtered.filter(item => item.status === searchForm.value.status)
+  }
+  total.value = filtered.length
+  const start = (pagination.value.currentPage - 1) * pagination.value.pageSize
+  tableData.value = filtered.slice(start, start + pagination.value.pageSize)
 }
 
 // 搜索
 const handleSearch = () => {
   pagination.value.currentPage = 1
-  fetchCourseList()
+  filterData()
 }
 
 // 重置
@@ -132,29 +105,29 @@ const handleReset = () => {
     status: ''
   }
   pagination.value.currentPage = 1
-  fetchCourseList()
+  filterData()
 }
 
 // 分页变化
 const handlePageChange = (page) => {
   pagination.value.currentPage = page
-  fetchCourseList()
+  filterData()
 }
 
 const handleSizeChange = (size) => {
   pagination.value.pageSize = size
   pagination.value.currentPage = 1
-  fetchCourseList()
+  filterData()
 }
 
-// 退课
+// 退课申请
 const handleRefund = async (row) => {
   try {
-    const { value: reason } = await ElMessageBox.prompt(
-      '请输入退课原因（不超过200字）：',
+    const { value: appReason } = await ElMessageBox.prompt(
+      '请输入退课申请原因（不超过200字）：',
       '退课申请',
       {
-        confirmButtonText: '确认退课',
+        confirmButtonText: '提交申请',
         cancelButtonText: '取消',
         inputType: 'textarea',
         inputPlaceholder: '请输入退课原因',
@@ -166,14 +139,22 @@ const handleRefund = async (row) => {
       }
     )
 
-    // TODO: 调用后端退课接口
-    console.log('退课原因:', reason)
-    ElMessage.success('退课成功')
-    fetchCourseList()
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    const res = await memberApi.dropClass({
+      memberCourseId: row.id,
+      appReason: appReason.trim(),
+      realName: userInfo.realName || ''
+    })
+    if (res.resCode === '00') {
+      ElMessage.success('申请成功')
+      fetchCourseList()
+    } else {
+      ElMessage.warning(res.resMsg || '申请失败')
+    }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('退课失败:', error)
-      ElMessage.error('退课失败')
+      console.error('退课申请失败:', error)
+      ElMessage.error('退课申请失败')
     }
   }
 }
@@ -197,7 +178,7 @@ const handleViewDetail = (row) => {
         </div>
         <div>
           <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">授课教练</div>
-          <div style="color: #606266; font-size: 14px;">${row.coach}</div>
+          <div style="color: #606266; font-size: 14px;">${row.coachName}</div>
         </div>
         <div>
           <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">课程时长</div>
@@ -254,17 +235,10 @@ onMounted(() => {
 <template>
   <div class="application-container">
     <!-- 页面标题 -->
-    <el-card class="header-card" shadow="never">
-      <div class="header-content">
-        <div class="header-left">
-          <el-icon class="header-icon"><Reading /></el-icon>
-          <div class="header-text">
-            <h1 class="page-title">我的课程</h1>
-            <p class="page-subtitle">管理你购买的课程</p>
-          </div>
-        </div>
-      </div>
-    </el-card>
+    <div class="page-header">
+      <h1 class="page-title"><el-icon><Reading /></el-icon> 我的课程</h1>
+      <p class="page-subtitle">管理你购买的课程</p>
+    </div>
 
     <!-- 搜索栏 -->
     <el-card class="search-card" shadow="never">
@@ -316,7 +290,7 @@ onMounted(() => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="coach" label="授课教练" min-width="120" />
+        <el-table-column prop="coachName" label="授课教练" min-width="120" />
         <el-table-column prop="duration" label="时长(分钟)" min-width="120" />
         <el-table-column prop="price" label="价格" min-width="120">
           <template #default="{ row }">
@@ -347,8 +321,8 @@ onMounted(() => {
               type="danger"
               link
               @click="handleRefund(row)"
-            >
-              退课
+            >  
+              退课申请
             </el-button>
           </template>
         </el-table-column>
@@ -377,49 +351,25 @@ onMounted(() => {
   min-height: calc(100vh - 60px);
 }
 
-.header-card {
+.page-header {
   margin-bottom: 20px;
-  border-radius: 12px;
-  border: none;
-}
-
-.header-card :deep(.el-card__body) {
-  padding: 20px 24px;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-icon {
-  font-size: 28px;
-  color: #667eea;
-}
-
-.header-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 28px;
+  font-weight: 900;
+  color: #1a1a2e;
+  margin: 0 0 8px 0;
 }
 
 .page-subtitle {
-  font-size: 13px;
-  color: #909399;
+  font-size: 14px;
+  color: #666;
   margin: 0;
 }
 

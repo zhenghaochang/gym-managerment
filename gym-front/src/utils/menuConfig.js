@@ -66,7 +66,7 @@ export const menuConfig = {
   'member:manage': { title: '会员管理', path: '/member', icon: 'User', parent: null, sort: 2 },
   'member:list': { title: '会员信息', path: '/member/list', icon: 'List', parent: 'member:manage', sort: 10 },
   'card:manage': { title: '办卡续费', path: '/member/card', icon: 'CreditCard', parent: 'member:manage', sort: 20 },
-  'member:application': { title: '申请审批', path: '/member/application', icon: 'DocumentChecked', parent: 'member:manage', sort: 30 },
+  'member:application': { title: '退课审批', path: '/member/application', icon: 'DocumentChecked', parent: 'member:manage', sort: 30 },
   
   // 课程管理
   'course:manage': { title: '课程管理', path: '/course', icon: 'Reading', parent: null, sort: 3 },
