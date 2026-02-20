@@ -53,4 +53,7 @@
             <if test="paymentTime != null">#{paymentTime}</if>
         </trim>
     </insert>
+    <select id="selectByOrderNum" resultType="zhenghc.entity.Order">
+        select * from gym.`order` where order_num = #{orderNum}
+    </select>
 </mapper>

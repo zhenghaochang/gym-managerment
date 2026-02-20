@@ -9,4 +9,6 @@ public interface OrderMapper {
     void insert(CardOrderDTO order);
 
     void insertNew(Order order);
+
+    Order selectByOrderNum(String orderNum);
 }
