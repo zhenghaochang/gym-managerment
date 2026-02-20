@@ -56,4 +56,7 @@
     <select id="selectUserByEmail" resultType="zhenghc.entity.User">
         select * from gym.user where email = #{email}
     </select>
+    <select id="selectByUserId" resultType="zhenghc.entity.User">
+        select * from gym.user where id = #{id}
+    </select>
 </mapper>

@@ -9,4 +9,7 @@
     <select id="selectAll" resultType="zhenghc.entity.vo.CourseVo">
         select c.* , u.real_name as coachName from gym.course c left join gym.user u on c.coach_id = u.id
     </select>
+    <select id="selectByCourseId" resultType="zhenghc.entity.Course">
+        select * from gym.course where id = #{courseId}
+    </select>
 </mapper>

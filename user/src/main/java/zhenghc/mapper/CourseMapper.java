@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface CourseMapper {
     List<CourseVo> selectAll();
+
+    Course selectByCourseId(Long courseId);
 }

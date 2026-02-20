@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zhenghc.mapper.CourseAppFormMapper">
+
+    <insert id="insert">
+        insert into gym.course_application_form (member_course_id, app_type, status, form_num, app_reason, refuse_reason, real_name)
+        value
+        (#{memberCourseId},#{appType},#{status},#{formNum},#{appReason},#{refuseReason},#{realName})
+    </insert>
+    <update id="updateStatusByNum">
+        update gym.course_application_form
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="refuseReason != null">refuse_reason = #{refuseReason}</if>
+        </set>
+        where form_num = #{formNum}
+    </update>
+    <select id="selectAll" resultType="zhenghc.entity.CourseAppForm">
+        select * from gym.course_application_form
+    </select>
+</mapper>

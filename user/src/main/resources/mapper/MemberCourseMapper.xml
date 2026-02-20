@@ -10,4 +10,16 @@
         value
         (#{courseId},#{courseName},#{userId},#{userRealName},#{status},#{orderNum})
     </insert>
+    <update id="updateStatus">
+        update gym.member_course set status = #{status} where id = #{courseId}
+    </update>
+    <update id="updateStatusAndReason">
+        update gym.member_course set status = #{status} , refuse_reason = #{refuseReason} where id = #{memberCourseId}
+    </update>
+    <select id="selectAll" resultType="zhenghc.entity.MemberCourse">
+        select * from gym.member_course where user_id = #{userId}
+    </select>
+    <select id="selectById" resultType="zhenghc.entity.MemberCourse">
+        select * from gym.member_course where id = #{id}
+    </select>
 </mapper>

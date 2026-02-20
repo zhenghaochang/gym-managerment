@@ -18,4 +18,6 @@ public interface UserMapper {
     User selectUserByEmail(String email);
 
     void insertUserRole(Long id);
+
+    User selectByUserId(Long id);
 }
