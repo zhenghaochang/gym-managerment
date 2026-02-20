@@ -1,12 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Search, Refresh } from '@element-plus/icons-vue'
 import { memberApi } from '@/api/modules/member'
 
 const loading = ref(false)
 const tableData = ref([])
 const total = ref(0)
-const pendingCount = ref(0) // 待审批数量
+const pendingCount = ref(0)
 
 // 搜索表单
 const searchForm = ref({
@@ -17,11 +18,11 @@ const searchForm = ref({
 
 // 申请类型映射
 const appTypeMap = {
-  1: '停卡申请',
-  2: '转卡申请'
+  1: '退课申请',
+  2: '延期申请'
 }
 
-// 申请状态映射
+// 审批状态映射
 const statusMap = {
   1: '待处理',
   2: '审批通过',
@@ -37,10 +38,11 @@ const pagination = ref({
 // 申请类型选项
 const appTypeOptions = [
   { label: '全部', value: '' },
-  { label: '停卡申请', value: 1 }
+  { label: '退课申请', value: 1 },
+  { label: '延期申请', value: 2 }
 ]
 
-// 申请状态选项
+// 审批状态选项
 const statusOptions = [
   { label: '全部', value: '' },
   { label: '待处理', value: 1 },
@@ -48,29 +50,22 @@ const statusOptions = [
   { label: '审批驳回', value: 3 }
 ]
 
+// 全量数据
+const allData = ref([])
+
 // 获取申请列表
 const fetchApplicationList = async () => {
   loading.value = true
   try {
-    const res = await memberApi.getApplicationList({
-      ...searchForm.value,
-      page: pagination.value.currentPage,
-      pageSize: pagination.value.pageSize
-    })
-    
+    const res = await memberApi.getCourseApplicationList()
     if (res.resCode === '00') {
-      const { formList, total: totalCount, pendingCount: pending } = res.result
-      
-      // 映射数据，添加名称字段
-      tableData.value = formList.map(item => ({
+      allData.value = (res.result || []).map(item => ({
         ...item,
-        appTypeName: appTypeMap[item.appType] || '未知类型',
-        statusName: statusMap[item.status] || '未知状态',
-        userName: item.realName // 兼容模板中的 userName
+        appTypeName: appTypeMap[item.appType] || '未知',
+        statusName: statusMap[item.status] || '未知'
       }))
-      
-      total.value = totalCount
-      pendingCount.value = pending
+      pendingCount.value = allData.value.filter(item => item.status === 1).length
+      filterData()
     } else {
       ElMessage.error(res.resMsg || '获取申请列表失败')
     }
@@ -82,49 +77,60 @@ const fetchApplicationList = async () => {
   }
 }
 
+// 前端筛选
+const filterData = () => {
+  let filtered = [...allData.value]
+  if (searchForm.value.realName) {
+    filtered = filtered.filter(item => item.realName.includes(searchForm.value.realName))
+  }
+  if (searchForm.value.status !== '') {
+    filtered = filtered.filter(item => item.status === searchForm.value.status)
+  }
+  if (searchForm.value.appType !== '') {
+    filtered = filtered.filter(item => item.appType === searchForm.value.appType)
+  }
+  total.value = filtered.length
+  const start = (pagination.value.currentPage - 1) * pagination.value.pageSize
+  tableData.value = filtered.slice(start, start + pagination.value.pageSize)
+}
+
 // 搜索
 const handleSearch = () => {
   pagination.value.currentPage = 1
-  fetchApplicationList()
+  filterData()
 }
 
 // 重置
 const handleReset = () => {
-  searchForm.value = {
-    realName: '',
-    status: '',
-    appType: ''
-  }
+  searchForm.value = { realName: '', status: '', appType: '' }
   pagination.value.currentPage = 1
-  fetchApplicationList()
+  filterData()
 }
 
 // 分页变化
 const handlePageChange = (page) => {
   pagination.value.currentPage = page
-  fetchApplicationList()
+  filterData()
 }
 
 const handleSizeChange = (size) => {
   pagination.value.pageSize = size
   pagination.value.currentPage = 1
-  fetchApplicationList()
+  filterData()
 }
 
 // 审批通过
 const handleApprove = async (row) => {
   try {
-    await ElMessageBox.confirm(`确认通过 ${row.userName} 的${row.appTypeName}吗？`, '审批确认', {
+    await ElMessageBox.confirm(`确认通过 ${row.realName} 的${row.appTypeName}吗？`, '审批确认', {
       type: 'success',
       confirmButtonText: '通过',
       cancelButtonText: '取消'
     })
-    
-    const res = await memberApi.approveApplication({
-      status: 2,
-      cardNum: row.cardNum
+    const res = await memberApi.updateCourseApplicationStatus({
+      ...row,
+      status: 2
     })
-    
     if (res.resCode === '00') {
       ElMessage.success('审批通过')
       fetchApplicationList()
@@ -133,7 +139,6 @@ const handleApprove = async (row) => {
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('审批失败:', error)
       ElMessage.error('审批失败')
     }
   }
@@ -142,17 +147,26 @@ const handleApprove = async (row) => {
 // 审批拒绝
 const handleReject = async (row) => {
   try {
-    await ElMessageBox.confirm(`确认拒绝 ${row.userName} 的${row.appTypeName}吗？`, '审批拒绝', {
-      type: 'warning',
-      confirmButtonText: '确定',
-      cancelButtonText: '取消'
-    })
-    
-    const res = await memberApi.approveApplication({
+    const { value: refuseReason } = await ElMessageBox.prompt(
+      '请输入拒绝原因（不超过200字）：',
+      '审批拒绝',
+      {
+        confirmButtonText: '确认拒绝',
+        cancelButtonText: '取消',
+        inputType: 'textarea',
+        inputPlaceholder: '请输入拒绝原因',
+        inputValidator: (value) => {
+          if (!value || value.trim() === '') return '请输入拒绝原因'
+          if (value.length > 200) return '拒绝原因不能超过200个字符'
+          return true
+        }
+      }
+    )
+    const res = await memberApi.updateCourseApplicationStatus({
+      ...row,
       status: 3,
-      cardNum: row.cardNum
+      refuseReason: refuseReason.trim()
     })
-    
     if (res.resCode === '00') {
       ElMessage.success('已拒绝申请')
       fetchApplicationList()
@@ -161,7 +175,6 @@ const handleReject = async (row) => {
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('审批失败:', error)
       ElMessage.error('审批失败')
     }
   }
@@ -178,33 +191,33 @@ const handleViewDetail = (row) => {
         </div>
         <div>
           <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">申请人</div>
-          <div style="color: #303133; font-size: 15px; font-weight: 600;">${row.userName}</div>
-        </div>
-        <div>
-          <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">会员卡号</div>
-          <div style="color: #606266; font-size: 14px;">${row.cardNum}</div>
+          <div style="color: #303133; font-size: 15px; font-weight: 600;">${row.realName}</div>
         </div>
         <div>
           <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">申请类型</div>
           <div style="color: #606266; font-size: 14px;">${row.appTypeName}</div>
         </div>
         <div>
-          <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">申请状态</div>
-          <div style="display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; background: ${row.status === 1 ? '#fdf6ec' : row.status === 2 ? '#f0f9ff' : '#fef0f0'}; color: ${row.status === 1 ? '#e6a23c' : row.status === 2 ? '#409eff' : '#f56c6c'};">${row.statusName}</div>
+          <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">审批状态</div>
+          <div style="display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; background: ${row.status === 1 ? '#fdf6ec' : row.status === 2 ? '#f0f9eb' : '#fef0f0'}; color: ${row.status === 1 ? '#e6a23c' : row.status === 2 ? '#67c23a' : '#f56c6c'};">${row.statusName}</div>
         </div>
         <div>
           <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">申请时间</div>
           <div style="color: #606266; font-size: 14px;">${row.createTime}</div>
         </div>
-        ${row.approveTime ? `<div style="grid-column: 1 / -1;">
-          <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">审批时间</div>
-          <div style="color: #606266; font-size: 14px;">${row.approveTime}</div>
-        </div>` : ''}
+        <div>
+          <div style="color: #909399; font-size: 12px; margin-bottom: 8px;">关联课程ID</div>
+          <div style="color: #606266; font-size: 14px;">${row.memberCourseId}</div>
+        </div>
       </div>
-      <div>
+      <div style="margin-bottom: 16px;">
         <div style="color: #909399; font-size: 12px; margin-bottom: 10px;">申请原因</div>
         <div style="color: #303133; font-size: 14px; line-height: 1.8; background: #f5f7fa; padding: 16px; border-radius: 6px; border-left: 3px solid #409eff;">${row.appReason || '无'}</div>
       </div>
+      ${row.refuseReason ? `<div>
+        <div style="color: #909399; font-size: 12px; margin-bottom: 10px;">驳回原因</div>
+        <div style="color: #303133; font-size: 14px; line-height: 1.8; background: #fef0f0; padding: 16px; border-radius: 6px; border-left: 3px solid #f56c6c;">${row.refuseReason}</div>
+      </div>` : ''}
     </div>`,
     '申请详情',
     {
@@ -230,14 +243,14 @@ onMounted(() => {
 
 <template>
   <div class="application-container">
-    <!-- 简约页面标题 -->
+    <!-- 页面标题 -->
     <el-card class="header-card" shadow="never">
       <div class="header-content">
         <div class="header-left">
           <el-icon class="header-icon"><DocumentChecked /></el-icon>
           <div class="header-text">
-            <h1 class="page-title">申请审批</h1>
-            <p class="page-subtitle">会员申请审批管理</p>
+            <h1 class="page-title">退课审批</h1>
+            <p class="page-subtitle">审批会员课程申请</p>
           </div>
         </div>
         <div class="header-stats">
@@ -252,10 +265,10 @@ onMounted(() => {
     <!-- 搜索栏 -->
     <el-card class="search-card" shadow="never">
       <el-form :model="searchForm" inline>
-        <el-form-item label="用户姓名">
+        <el-form-item label="申请人">
           <el-input
             v-model="searchForm.realName"
-            placeholder="请输入用户姓名"
+            placeholder="请输入申请人姓名"
             clearable
             style="width: 200px"
           />
@@ -275,10 +288,10 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="申请状态">
+        <el-form-item label="审批状态">
           <el-select
             v-model="searchForm.status"
-            placeholder="请选择申请状态"
+            placeholder="请选择审批状态"
             clearable
             style="width: 150px"
           >
@@ -299,59 +312,30 @@ onMounted(() => {
 
     <!-- 表格 -->
     <el-card class="table-card" shadow="never">
-      <el-table
-        :data="tableData"
-        v-loading="loading"
-        stripe
-        style="width: 100%"
-      >
-        <el-table-column prop="formNum" label="申请单号" width="160" />
-        <el-table-column prop="userName" label="用户姓名" width="120" />
-        <el-table-column prop="cardNum" label="会员卡号" width="150" />
-        <el-table-column prop="appTypeName" label="申请类型" width="120">
+      <el-table :data="tableData" v-loading="loading" stripe style="width: 100%">
+        <el-table-column prop="formNum" label="申请单号" min-width="180" />
+        <el-table-column prop="realName" label="申请人" min-width="100" />
+        <el-table-column prop="appTypeName" label="申请类型" min-width="100">
           <template #default="{ row }">
-            <el-tag :type="row.appType === 1 ? 'warning' : 'primary'" size="small">
+            <el-tag :type="row.appType === 1 ? 'danger' : 'warning'" size="small">
               {{ row.appTypeName }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="statusName" label="申请状态" width="100">
+        <el-table-column prop="statusName" label="审批状态" min-width="100">
           <template #default="{ row }">
             <el-tag :type="getStatusTagType(row.status)" size="small">
               {{ row.statusName }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="申请时间" width="180" />
-        <el-table-column prop="appReason" label="申请原因" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="createTime" label="申请时间" min-width="180" />
+        <el-table-column prop="appReason" label="申请原因" min-width="180" show-overflow-tooltip />
         <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button
-              size="small"
-              type="primary"
-              link
-              @click="handleViewDetail(row)"
-            >
-              查看
-            </el-button>
-            <el-button
-              v-if="row.status === 1"
-              size="small"
-              type="success"
-              link
-              @click="handleApprove(row)"
-            >
-              通过
-            </el-button>
-            <el-button
-              v-if="row.status === 1"
-              size="small"
-              type="danger"
-              link
-              @click="handleReject(row)"
-            >
-              拒绝
-            </el-button>
+            <el-button size="small" type="primary" link @click="handleViewDetail(row)">查看</el-button>
+            <el-button v-if="row.status === 1" size="small" type="success" link @click="handleApprove(row)">通过</el-button>
+            <el-button v-if="row.status === 1" size="small" type="danger" link @click="handleReject(row)">拒绝</el-button>
           </template>
         </el-table-column>
       </el-table>

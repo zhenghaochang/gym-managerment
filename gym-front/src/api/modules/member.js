@@ -67,5 +67,25 @@ export const memberApi = {
   // 购买课程
   buyCourse(data) {
     return apiService.post('/course/buyCourse', data)
+  },
+
+  // 获取我的课程列表
+  getMyCourseList() {
+    return apiService.post('/myCourse/list')
+  },
+
+  // 退课
+  dropClass(data) {
+    return apiService.post('/myCourse/dropClass', data)
+  },
+
+  // 获取退课审批列表
+  getCourseApplicationList() {
+    return apiService.post('/courseManager/list')
+  },
+
+  // 退课审批（通过/拒绝）
+  updateCourseApplicationStatus(data) {
+    return apiService.post('/courseManager/updateStatus', data)
   }
 }
