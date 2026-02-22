@@ -87,5 +87,30 @@ export const memberApi = {
   // 退课审批（通过/拒绝）
   updateCourseApplicationStatus(data) {
     return apiService.post('/courseManager/updateStatus', data)
+  },
+
+  // 获取团课预约列表（当前用户已购买的待预约团课）
+  getBookingList() {
+    return apiService.post('/booking/list')
+  },
+
+  // 获取团课周排班表（传入日期范围，后端统计该周的已预约人数）
+  getScheduleList(data) {
+    return apiService.post('/booking/scheduleList', data)
+  },
+
+  // 团课预约
+  bookGroupCourse(data) {
+    return apiService.post('/booking/booking', data)
+  },
+
+  // 获取私教预约列表（当前用户已购买的私教课）
+  getPrivateBookingList() {
+    return apiService.post('/booking/privateList')
+  },
+
+  // 私教预约
+  bookPrivateCourse(data) {
+    return apiService.post('/booking/bookingPrivate', data)
   }
 }

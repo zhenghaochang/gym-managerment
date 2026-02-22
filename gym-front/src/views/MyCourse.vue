@@ -10,8 +10,8 @@ const total = ref(0)
 
 // 课程状态映射
 const statusMap = {
-  1: '待签到',
-  2: '已签到',
+  1: '待预约',
+  2: '已预约',
   3: '已退课'
 }
 
@@ -36,8 +36,8 @@ const pagination = ref({
 // 课程状态选项
 const statusOptions = [
   { label: '全部', value: '' },
-  { label: '待签到', value: 1 },
-  { label: '已签到', value: 2 },
+  { label: '待预约', value: 1 },
+  { label: '已预约', value: 2 },
   { label: '已退课', value: 3 }
 ]
 
