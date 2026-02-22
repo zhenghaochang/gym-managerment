@@ -22,4 +22,26 @@
     <select id="selectById" resultType="zhenghc.entity.MemberCourse">
         select * from gym.member_course where id = #{id}
     </select>
+    <select id="selectByBooking" resultType="zhenghc.entity.MemberCourse">
+        select * from gym.member_course mc
+        where mc.user_id = #{userId}
+          and mc.status = 1
+          and exists (
+            select 1 from gym.course c
+            where c.id = mc.course_id
+              and c.course_type = 1
+        )
+    </select>
+    <select id="selectByBookingPrivate" resultType="zhenghc.entity.vo.PrivateBookingListVo">
+        select mc.*, u.real_name,c2.duration,c2.coach_id from gym.member_course mc
+            left join gym.course c2 on mc.course_id = c2.id
+                left join gym.user u on c2.coach_id = u.id
+        where mc.user_id = #{userId}
+          and mc.status = 1 or mc.status = 2
+          and exists (
+            select 1 from gym.course c
+            where c.id = mc.course_id
+              and c.course_type = 2
+        )
+    </select>
 </mapper>

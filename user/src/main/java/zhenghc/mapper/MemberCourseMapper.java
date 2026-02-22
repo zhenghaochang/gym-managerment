@@ -3,6 +3,7 @@ package zhenghc.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import zhenghc.entity.MemberCourse;
 import zhenghc.entity.dto.MemberCourseDTO;
+import zhenghc.entity.vo.PrivateBookingListVo;
 
 import java.util.List;
 
@@ -18,4 +19,8 @@ public interface MemberCourseMapper {
     MemberCourse selectById(Long id);
 
     void updateStatusAndReason(Long memberCourseId, Integer status, String refuseReason);
+
+    List<MemberCourse> selectByBooking(Long userId);
+
+    List<PrivateBookingListVo> selectByBookingPrivate(Long userId);
 }
