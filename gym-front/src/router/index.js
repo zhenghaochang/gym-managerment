@@ -67,6 +67,20 @@ const routes = [
     component: () => import('@/views/MyCourse.vue'),
     meta: { requiresAuth: true }
   },
+  // 团课预约
+  {
+    path: '/member/course-booking',
+    name: 'CourseBooking',
+    component: () => import('@/views/CourseBooking.vue'),
+    meta: { requiresAuth: true }
+  },
+  // 私教预约
+  {
+    path: '/member/course-booking2',
+    name: 'PrivateBooking',
+    component: () => import('@/views/PrivateBooking.vue'),
+    meta: { requiresAuth: true }
+  },
   // 会员管理
   {
     path: '/member/list',
