@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zhenghc.mapper.BookingRecordMapper">
+    <insert id="insert">
+        insert into gym.booking_record (user_id, member_course_id, schedule_id, booking_date, booking_time, status)
+        value
+        (#{userId},#{memberCourseId},#{scheduleId},#{bookingDate},#{bookingTime},#{status})
+    </insert>
+
+    <select id="selectBookedNumByDate" resultType="zhenghc.entity.vo.ScheduleBookedNumVo">
+        SELECT schedule_id, COUNT(*) AS number
+        FROM booking_record
+        WHERE booking_date BETWEEN #{param.startDate} AND #{param.endDate}
+          AND status != 3
+        GROUP BY schedule_id
+    </select>
+    <select id="selectUserBookedScheduleIds" resultType="java.lang.Long">
+        SELECT DISTINCT schedule_id
+        FROM gym.booking_record
+        WHERE user_id = #{userId}
+          AND booking_date BETWEEN #{startDate} AND #{endDate}
+          AND status != 3
+    </select>
+</mapper>

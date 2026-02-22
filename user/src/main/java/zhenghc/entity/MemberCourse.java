@@ -13,7 +13,7 @@ public class MemberCourse {
     private String userRealName;
 
     /**
-     * 课程状态 1-待签到 2-已签到 3-已退课
+     * 课程状态 1-待预约 2-已预约 3-已退课
      * */
     private Integer status;
 
