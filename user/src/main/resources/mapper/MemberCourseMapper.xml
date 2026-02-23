@@ -37,7 +37,7 @@
             left join gym.course c2 on mc.course_id = c2.id
                 left join gym.user u on c2.coach_id = u.id
         where mc.user_id = #{userId}
-          and mc.status = 1 or mc.status = 2
+          and (mc.status = 1 or mc.status = 2)
           and exists (
             select 1 from gym.course c
             where c.id = mc.course_id

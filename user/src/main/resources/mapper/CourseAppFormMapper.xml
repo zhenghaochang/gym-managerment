@@ -21,4 +21,7 @@
     <select id="selectAll" resultType="zhenghc.entity.CourseAppForm">
         select * from gym.course_application_form
     </select>
+    <select id="select" resultType="zhenghc.entity.CourseAppForm">
+        select * from gym.course_application_form where user_id = #{userId}
+    </select>
 </mapper>

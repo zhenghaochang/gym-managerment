@@ -9,7 +9,10 @@ import java.util.List;
 public interface CourseAppFormMapper {
     void insert(CourseAppForm form);
 
+
     List<CourseAppForm> selectAll();
 
     void updateStatusByNum(String formNum, Integer status,String refuseReason);
+
+    List<CourseAppForm> select(Long userId);
 }
