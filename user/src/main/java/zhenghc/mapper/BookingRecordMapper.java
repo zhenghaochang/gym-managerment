@@ -3,8 +3,10 @@ package zhenghc.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import zhenghc.entity.BookingPrivateRecord;
+import zhenghc.entity.BookingRecord;
 import zhenghc.entity.dto.BookingDTO;
 import zhenghc.entity.dto.ScheduleListDTO;
+import zhenghc.entity.vo.BookedRCVo;
 import zhenghc.entity.vo.ScheduleBookedNumVo;
 
 import java.util.List;
@@ -17,5 +19,11 @@ public interface BookingRecordMapper {
 
     void insert(BookingPrivateRecord param);
 
-    List<Long> selectUserBookedScheduleIds(Long userId, String startDate, String endDate);
+    List<BookedRCVo> selectUserBookedScheduleIds(Long userId, String startDate, String endDate);
+
+    BookingRecord selectById(Long bookingRecordId);
+
+    void updateStatus(Long bookingRecordId, Integer status);
+
+    Long selectIdByMcId(Long memberCourseId);
 }

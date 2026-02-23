@@ -70,6 +70,8 @@ public class MyCourseController {
     @PostMapping("/dropClass")
     public BaseResponse dropClass(@RequestBody DropClassDTO param){
 
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         MemberCourse thisCourse = memberCourseMapper.selectById(param.getMemberCourseId());
         if(thisCourse.getStatus() == 3){
             return BaseResponse.error(BaseConstants.resultCode.BUSINESS_ERROR , "请勿重复申请");
@@ -86,6 +88,7 @@ public class MyCourseController {
         form.setAppReason(param.getAppReason());
         form.setMemberCourseId(param.getMemberCourseId());
         form.setRealName(param.getRealName());
+        form.setUserId(user.getId());
         courseAppFormMapper.insert(form);
 
         memberCourseMapper.updateStatus(param.getMemberCourseId(),4);

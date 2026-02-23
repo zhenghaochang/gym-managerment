@@ -9,6 +9,9 @@
         value
         (#{userId},#{memberCourseId},#{scheduleId},#{bookingDate},#{bookingTime},#{status})
     </insert>
+    <update id="updateStatus">
+        update gym.booking_record set status = #{status} where id = #{bookingRecordId}
+    </update>
 
     <select id="selectBookedNumByDate" resultType="zhenghc.entity.vo.ScheduleBookedNumVo">
         SELECT schedule_id, COUNT(*) AS number
@@ -17,11 +20,17 @@
           AND status != 3
         GROUP BY schedule_id
     </select>
-    <select id="selectUserBookedScheduleIds" resultType="java.lang.Long">
-        SELECT DISTINCT schedule_id
+    <select id="selectUserBookedScheduleIds" resultType="zhenghc.entity.vo.BookedRCVo">
+        SELECT DISTINCT schedule_id, id as bookingRecordId, status
         FROM gym.booking_record
         WHERE user_id = #{userId}
           AND booking_date BETWEEN #{startDate} AND #{endDate}
           AND status != 3
+    </select>
+    <select id="selectById" resultType="zhenghc.entity.BookingRecord">
+        select * from gym.booking_record where id = #{bookingRecordId}
+    </select>
+    <select id="selectIdByMcId" resultType="java.lang.Long">
+        select id from gym.booking_record where member_course_id = #{memberCourseId} and status  = 2
     </select>
 </mapper>

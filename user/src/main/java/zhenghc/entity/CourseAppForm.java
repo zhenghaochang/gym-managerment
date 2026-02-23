@@ -10,6 +10,8 @@ public class CourseAppForm {
 
     private Long memberCourseId;
 
+    private Long userId;
+
     /**
      * 申请单类型 1-退课 2-延期
      * */
@@ -42,6 +44,14 @@ public class CourseAppForm {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public Date getCreateTime() {
         return createTime;

@@ -67,7 +67,9 @@ public class MyCardController {
             return false;
         }).collect(Collectors.toList());
 
-        memberCardMapper.updateStatusBatch(updateList);
+       if(!updateList.isEmpty()){
+           memberCardMapper.updateStatusBatch(updateList);
+       }
 
         return BaseResponse.success("获取成功", newList);
     }

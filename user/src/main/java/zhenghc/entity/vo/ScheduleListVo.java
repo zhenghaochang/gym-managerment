@@ -14,6 +14,33 @@ public class ScheduleListVo extends CourseSchedule {
      * */
     private Boolean userBooked;
 
+    /**
+     * 预约记录id
+     * */
+    private Long bookingRecordId;
+
+    /**
+     * 预约记录状态
+     * */
+    private Integer recordStatus;
+
+
+    public Integer getRecordStatus() {
+        return recordStatus;
+    }
+
+    public void setRecordStatus(Integer recordStatus) {
+        this.recordStatus = recordStatus;
+    }
+
+    public Long getBookingRecordId() {
+        return bookingRecordId;
+    }
+
+    public void setBookingRecordId(Long bookingRecordId) {
+        this.bookingRecordId = bookingRecordId;
+    }
+
     public Boolean getUserBooked() {
         return userBooked;
     }
