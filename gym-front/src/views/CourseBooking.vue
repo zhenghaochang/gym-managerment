@@ -56,11 +56,13 @@ const getMatchedCourses = (item) => {
 const isPurchased = (item) => purchasedCourseNames.value.has(item.courseName)
 const isFull = (item) => item.bookedCount >= item.capacity
 const isBooked = (item) => !!item.userBooked
-const isDisabled = (item, dateStr) => isPast(dateStr) || isBooked(item) || !isPurchased(item) || isFull(item)
+const isCancelling = (item) => item.recordStatus === 2
+const isDisabled = (item, dateStr) => isPast(dateStr) || isCancelling(item) || (!isBooked(item) && (!isPurchased(item) || isFull(item)))
 
 const getButtonText = (item, dateStr) => {
   if (isPast(dateStr)) return '已过期'
-  if (isBooked(item)) return '已预约'
+  if (isCancelling(item)) return '取消中'
+  if (isBooked(item)) return '取消预约'
   if (!isPurchased(item)) return '未购买'
   if (isFull(item)) return '已满'
   return '预约'
@@ -73,13 +75,35 @@ const currentDateInfo = ref(null)
 const matchedCourseList = ref([])
 const selectedCourseId = ref(null)
 
+// 取消预约弹窗
+const cancelDialogVisible = ref(false)
+const cancelScheduleItem = ref(null)
+const cancelDateInfo = ref(null)
+const cancelReason = ref('')
+
 const handleGroupBook = (item, dateInfo) => {
-  if (isDisabled(item)) {
-    if (!isPurchased(item)) {
-      ElMessage.warning('您尚未购买该课程，请先前往购买课程页面购买')
-    } else {
-      ElMessage.warning('该时段已满员')
+  // 已预约 -> 取消预约
+  if (isBooked(item)) {
+    // 判断当前时间是否已到上课时间，到了则不允许取消
+    const now = new Date()
+    const courseStart = new Date(`${dateInfo.date} ${item.startTime}:00`)
+    if (now >= courseStart) {
+      ElMessage.warning('课程已开始或已结束，无法取消预约')
+      return
     }
+    cancelScheduleItem.value = item
+    cancelDateInfo.value = dateInfo
+    cancelReason.value = ''
+    cancelDialogVisible.value = true
+    return
+  }
+  if (isPast(dateInfo.date)) return
+  if (!isPurchased(item)) {
+    ElMessage.warning('您尚未购买该课程，请先前往购买课程页面购买')
+    return
+  }
+  if (isFull(item)) {
+    ElMessage.warning('该时段已满员')
     return
   }
   const matched = getMatchedCourses(item)
@@ -88,10 +112,34 @@ const handleGroupBook = (item, dateInfo) => {
   matchedCourseList.value = matched
   selectedCourseId.value = null
   if (matched.length === 1) {
-    // 只有一条记录，直接选中
     selectedCourseId.value = matched[0].id
   }
   selectDialogVisible.value = true
+}
+
+const submitCancelBooking = async () => {
+  if (!cancelReason.value.trim()) {
+    ElMessage.warning('请输入取消理由')
+    return
+  }
+  try {
+    const item = cancelScheduleItem.value
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    const res = await memberApi.cancelGroupBooking({
+      bookingRecordId: item.bookingRecordId,
+      appReason: cancelReason.value.trim(),
+      realName: userInfo.realName || ''
+    })
+    if (res.resCode === '00') {
+      ElMessage.success(res.resMsg || '取消预约申请已提交')
+      cancelDialogVisible.value = false
+      await Promise.all([loadScheduleList(), loadBookingList()])
+    } else {
+      ElMessage.warning(res.resMsg || '取消失败')
+    }
+  } catch (e) {
+    ElMessage.error('取消预约失败，请稍后重试')
+  }
 }
 
 const confirmBooking = async () => {
@@ -250,7 +298,8 @@ watch(currentWeekOffset, async () => {
                 :class="{
                   'not-purchased': !isPurchased(item) && !isBooked(item),
                   full: isPurchased(item) && isFull(item) && !isBooked(item),
-                  booked: isBooked(item),
+                  booked: isBooked(item) && !isCancelling(item),
+                  cancelling: isCancelling(item),
                   'past': isPast(dayInfo.date)
                 }"
               >
@@ -270,7 +319,7 @@ watch(currentWeekOffset, async () => {
                 </div>
                 <el-button
                   size="small"
-                  :type="isBooked(item) ? 'success' : isDisabled(item, dayInfo.date) ? 'info' : 'primary'"
+                  :type="isCancelling(item) ? 'warning' : isBooked(item) ? 'success' : isDisabled(item, dayInfo.date) ? 'info' : 'primary'"
                   :disabled="isDisabled(item, dayInfo.date)"
                   round
                   class="slot-btn"
@@ -319,6 +368,46 @@ watch(currentWeekOffset, async () => {
       <template #footer>
         <el-button @click="selectDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="confirmBooking">确认预约</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 取消预约弹窗 -->
+    <el-dialog v-model="cancelDialogVisible" title="取消预约" width="460px" :close-on-click-modal="false">
+      <div v-if="cancelScheduleItem" class="cancel-dialog-content">
+        <div class="cancel-info">
+          <div class="cancel-info-row">
+            <span class="cancel-info-label">课程</span>
+            <span>{{ cancelScheduleItem.courseName }}</span>
+          </div>
+          <div class="cancel-info-row">
+            <span class="cancel-info-label">日期</span>
+            <span>{{ cancelDateInfo?.date }}（{{ cancelDateInfo?.name }}）</span>
+          </div>
+          <div class="cancel-info-row">
+            <span class="cancel-info-label">时间</span>
+            <span>{{ cancelScheduleItem.startTime }} - {{ cancelScheduleItem.endTime }}</span>
+          </div>
+          <div class="cancel-info-row">
+            <span class="cancel-info-label">教练</span>
+            <span>{{ cancelScheduleItem.coachName }}</span>
+          </div>
+        </div>
+        <el-form label-position="top" style="margin-top: 16px;">
+          <el-form-item label="取消理由" required>
+            <el-input
+              v-model="cancelReason"
+              type="textarea"
+              placeholder="请输入取消预约的理由"
+              :rows="3"
+              maxlength="200"
+              show-word-limit
+            />
+          </el-form-item>
+        </el-form>
+      </div>
+      <template #footer>
+        <el-button @click="cancelDialogVisible = false">返回</el-button>
+        <el-button type="danger" :disabled="!cancelReason.trim()" @click="submitCancelBooking">提交申请</el-button>
       </template>
     </el-dialog>
   </div>
@@ -382,6 +471,9 @@ watch(currentWeekOffset, async () => {
 .slot-card.booked { background: #f0f9eb; border-color: #b3e19d; }
 .slot-card.booked .slot-time { color: #67c23a; }
 .slot-card.booked:hover { border-color: #67c23a; box-shadow: 0 2px 8px rgba(103,194,58,0.15); }
+.slot-card.cancelling { background: #fdf6ec; border-color: #f5dab1; }
+.slot-card.cancelling .slot-time { color: #e6a23c; }
+.slot-card.cancelling:hover { border-color: #e6a23c; box-shadow: 0 2px 8px rgba(230,162,60,0.15); }
 
 .slot-time { font-size: 13px; font-weight: 700; color: #409eff; margin-bottom: 4px; }
 .slot-name { font-size: 14px; font-weight: 700; color: #303133; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -407,6 +499,12 @@ watch(currentWeekOffset, async () => {
 .course-detail-label { font-size: 12px; color: #909399; min-width: 56px; }
 .course-detail-value { font-size: 13px; color: #303133; }
 .course-detail-value.order-num { font-family: monospace; font-size: 12px; color: #606266; }
+
+/* 取消预约弹窗 */
+.cancel-dialog-content { padding: 0 4px; }
+.cancel-info { background: #fafbfc; border-radius: 8px; padding: 12px 16px; border: 1px solid #ebeef5; }
+.cancel-info-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 14px; color: #303133; }
+.cancel-info-label { font-size: 13px; color: #909399; min-width: 40px; }
 
 @media (max-width: 1200px) { .timetable { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 768px) { .timetable { grid-template-columns: repeat(2, 1fr); } }

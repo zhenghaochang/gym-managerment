@@ -39,7 +39,9 @@ export const menuIconMap = {
   'course:my-card': 'Postcard',
   'member:my-course': 'Reading',
   'member:course-booking': 'Calendar',
-  'member:course-booking2': 'User'
+  'member:course-booking2': 'User',
+  'member:my-application': 'Document',
+  'member:booked-record': 'Tickets'
 }
 
 // 菜单配置（权限代码 -> 菜单信息）
@@ -58,6 +60,8 @@ export const menuConfig = {
   'member:my-course': { title: '我的课程', path: '/member/myCourse', icon: 'Reading', parent: null, sort: 11 },
   'member:course-booking': { title: '团课预约', path: '/member/course-booking', icon: 'Calendar', parent: null, sort: 12 },
   'member:course-booking2': { title: '私教预约', path: '/member/course-booking2', icon: 'User', parent: null, sort: 13 },
+  'member:my-application': { title: '我的申请', path: '/member/myApplication', icon: 'Document', parent: null, sort: 14 },
+  'member:booked-record': { title: '预约记录', path: '/member/bookedRecord', icon: 'Tickets', parent: null, sort: 15 },
   
   // 系统管理
   'system:manage': { title: '系统管理', path: '/system', icon: 'Setting', parent: null, sort: 1 },
