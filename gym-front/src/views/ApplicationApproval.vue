@@ -19,7 +19,7 @@ const searchForm = ref({
 // 申请类型映射
 const appTypeMap = {
   1: '退课申请',
-  2: '延期申请'
+  2: '预约取消申请'
 }
 
 // 审批状态映射
@@ -39,7 +39,7 @@ const pagination = ref({
 const appTypeOptions = [
   { label: '全部', value: '' },
   { label: '退课申请', value: 1 },
-  { label: '延期申请', value: 2 }
+  { label: '预约取消申请', value: 2 }
 ]
 
 // 审批状态选项

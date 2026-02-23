@@ -112,5 +112,20 @@ export const memberApi = {
   // 私教预约
   bookPrivateCourse(data) {
     return apiService.post('/booking/bookingPrivate', data)
+  },
+
+  // 取消团课预约
+  cancelGroupBooking(data) {
+    return apiService.post('/booking/courseCancel', data)
+  },
+
+  // 获取我的申请列表
+  getMyApplicationList() {
+    return apiService.post('/myApplication/list')
+  },
+
+  // 获取预约记录列表
+  getBookedRecordList() {
+    return apiService.post('/bookedRecord/list')
   }
 }

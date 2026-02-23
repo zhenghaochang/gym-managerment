@@ -81,6 +81,20 @@ const routes = [
     component: () => import('@/views/PrivateBooking.vue'),
     meta: { requiresAuth: true }
   },
+  // 我的申请
+  {
+    path: '/member/myApplication',
+    name: 'MyApplication',
+    component: () => import('@/views/MyApplication.vue'),
+    meta: { requiresAuth: true }
+  },
+  // 预约记录
+  {
+    path: '/member/bookedRecord',
+    name: 'BookedRecord',
+    component: () => import('@/views/BookedRecord.vue'),
+    meta: { requiresAuth: true }
+  },
   // 会员管理
   {
     path: '/member/list',
