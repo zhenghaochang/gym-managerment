@@ -31,7 +31,7 @@ export const userApi = {
   
   // 修改密码
   changePassword(data) {
-    return apiService.put('/user/password', data)
+    return apiService.post('/user/changePassword', data)
   },
   
   // 退出登录

@@ -20,7 +20,7 @@ const handleMenuClick = (path) => {
 
 <template>
   <div class="sidebar">
-    <div class="sidebar-header">
+    <div class="sidebar-header" @click="$router.push('/dashboard')" style="cursor: pointer;">
       <div class="logo-wrapper">
         <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z" fill="currentColor"/>
@@ -192,14 +192,14 @@ const handleMenuClick = (path) => {
 /* 菜单项样式 */
 .sidebar-menu-list :deep(.el-menu-item),
 .sidebar-menu-list :deep(.el-sub-menu__title) {
-  height: 52px;
-  line-height: 52px;
+  height: 68px;
+  line-height: 68px;
   color: #a6adc8;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin: 4px 12px;
   border-radius: 10px;
   padding-left: 20px !important;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 500;
   position: relative;
   overflow: hidden;
@@ -209,7 +209,7 @@ const handleMenuClick = (path) => {
 /* 图标样式 */
 .sidebar-menu-list :deep(.el-menu-item .el-icon),
 .sidebar-menu-list :deep(.el-sub-menu__title .el-icon) {
-  font-size: 18px;
+  font-size: 24px;
   margin-right: 12px;
   transition: all 0.3s;
   color: #7f849c;
