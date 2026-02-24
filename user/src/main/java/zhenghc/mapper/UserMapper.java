@@ -20,4 +20,6 @@ public interface UserMapper {
     void insertUserRole(Long id);
 
     User selectByUserId(Long id);
+
+    void update(User user);
 }

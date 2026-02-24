@@ -56,4 +56,8 @@
     <select id="selectByOrderNum" resultType="zhenghc.entity.Order">
         select * from gym.`order` where order_num = #{orderNum}
     </select>
+    <select id="selectAllOrderByUserId" resultType="zhenghc.entity.vo.OrderListVo">
+        select o.*, oi.product_name from gym.`order` o left join gym.order_item oi on oi.order_id = o.id
+        where user_id = #{userId}
+    </select>
 </mapper>
