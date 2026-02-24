@@ -2,6 +2,7 @@ package zhenghc.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import zhenghc.common.BaseConstants;
 import zhenghc.common.util.JwtUtil;
 import zhenghc.common.util.RedisUtil;
 import zhenghc.entity.User;
+import zhenghc.entity.dto.ChangePasswordDTO;
 import zhenghc.entity.dto.LoginDTO;
 import zhenghc.entity.dto.RegistUserDTO;
 import zhenghc.common.resp.BaseResponse;
@@ -107,6 +109,22 @@ public class UserController {
         Long userId = user.getId();
         redisUtil.delete(BaseConstants.USER_ID_KEY+userId);
         return BaseResponse.success(null);
+    }
+
+    @PostMapping("/changePassword")
+    public BaseResponse changePassword(@RequestBody ChangePasswordDTO param){
+
+        User user = userMapper.selectUserByUserName(param.getUsername());
+
+        if(!user.getPassword().equals(param.getOldPassword())){
+            return BaseResponse.error(BaseConstants.resultCode.BUSINESS_ERROR, "旧密码错误");
+        }
+        User newUser = new User();
+        newUser.setPassword(param.getNewPassword());
+        newUser.setId(((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId());
+        userMapper.update(newUser);
+
+        return BaseResponse.success("修改成功，请重新登录", null);
     }
 
 }

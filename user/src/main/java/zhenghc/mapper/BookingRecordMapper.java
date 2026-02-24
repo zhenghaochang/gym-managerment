@@ -26,4 +26,8 @@ public interface BookingRecordMapper {
     void updateStatus(Long bookingRecordId, Integer status);
 
     Long selectIdByMcId(Long memberCourseId);
+
+    List<BookingRecord> selectAllByUserId(Long id);
+
+    void deleteById(Long id);
 }

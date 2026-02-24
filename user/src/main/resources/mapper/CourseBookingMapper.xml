@@ -12,6 +12,9 @@
     <update id="updateStatus">
         update gym.booking_record set status = #{status} where id = #{bookingRecordId}
     </update>
+    <delete id="deleteById">
+        delete from gym.booking_record where id = #{id}
+    </delete>
 
     <select id="selectBookedNumByDate" resultType="zhenghc.entity.vo.ScheduleBookedNumVo">
         SELECT schedule_id, COUNT(*) AS number
@@ -32,5 +35,8 @@
     </select>
     <select id="selectIdByMcId" resultType="java.lang.Long">
         select id from gym.booking_record where member_course_id = #{memberCourseId} and status  = 2
+    </select>
+    <select id="selectAllByUserId" resultType="zhenghc.entity.BookingRecord">
+        select * from gym.booking_record where user_id = #{userId}
     </select>
 </mapper>

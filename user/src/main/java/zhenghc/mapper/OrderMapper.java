@@ -3,6 +3,9 @@ package zhenghc.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import zhenghc.entity.Order;
 import zhenghc.entity.dto.CardOrderDTO;
+import zhenghc.entity.vo.OrderListVo;
+
+import java.util.List;
 
 @Mapper
 public interface OrderMapper {
@@ -11,4 +14,6 @@ public interface OrderMapper {
     void insertNew(Order order);
 
     Order selectByOrderNum(String orderNum);
+
+    List<OrderListVo> selectAllOrderByUserId(Long userId);
 }
