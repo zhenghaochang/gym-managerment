@@ -127,5 +127,25 @@ export const memberApi = {
   // 获取预约记录列表
   getBookedRecordList() {
     return apiService.post('/bookedRecord/list')
+  },
+
+  // 删除预约记录
+  deleteBookedRecord(id) {
+    return apiService.post('/bookedRecord/delete', id)
+  },
+
+  // 获取个人中心信息
+  getMyCenterInfo() {
+    return apiService.post('/myCenter/list')
+  },
+
+  // 修改个人信息
+  updateMyCenterInfo(data) {
+    return apiService.post('/myCenter/update', data)
+  },
+
+  // 获取我的订单列表
+  getMyOrderList() {
+    return apiService.post('/myOrder/list')
   }
 }

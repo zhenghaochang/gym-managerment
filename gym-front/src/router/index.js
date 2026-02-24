@@ -95,6 +95,20 @@ const routes = [
     component: () => import('@/views/BookedRecord.vue'),
     meta: { requiresAuth: true }
   },
+  // 个人中心
+  {
+    path: '/member/myCenter',
+    name: 'MyCenter',
+    component: () => import('@/views/MyCenter.vue'),
+    meta: { requiresAuth: true }
+  },
+  // 我的订单
+  {
+    path: '/member/order',
+    name: 'MyOrder',
+    component: () => import('@/views/MyOrder.vue'),
+    meta: { requiresAuth: true }
+  },
   // 会员管理
   {
     path: '/member/list',

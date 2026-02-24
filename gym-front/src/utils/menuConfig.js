@@ -29,9 +29,7 @@ export const menuIconMap = {
   'income:stat': 'TrendCharts',
   
   'member:home': 'HomeFilled',
-  'member:booking': 'Tickets',
-  'member:timetable': 'Calendar',
-  'member:measure': 'DataLine',
+  'member:myCenter': 'User',
   'member:order': 'ShoppingCart',
   
   'member:create-card': 'CreditCard',
@@ -48,9 +46,7 @@ export const menuIconMap = {
 export const menuConfig = {
   // 会员菜单
   'member:home': { title: '我的主页', path: '/member/home', icon: 'HomeFilled', parent: null, sort: 7 },
-  'member:booking': { title: '预约记录', path: '/member/booking', icon: 'Tickets', parent: 'member:home', sort: 10 },
-  'member:timetable': { title: '我的课表', path: '/member/timetable', icon: 'Calendar', parent: 'member:home', sort: 20 },
-  'member:measure': { title: '体测记录', path: '/member/measure', icon: 'DataLine', parent: 'member:home', sort: 30 },
+  'member:myCenter': { title: '个人中心', path: '/member/myCenter', icon: 'User', parent: 'member:home', sort: 10 },
   'member:order': { title: '我的订单', path: '/member/order', icon: 'ShoppingCart', parent: 'member:home', sort: 40 },
   
   // 会员独立菜单（无父级）
