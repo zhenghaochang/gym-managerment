@@ -1,16 +1,19 @@
 package zhenghc.controller.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import zhenghc.common.BaseConstants;
 import zhenghc.common.resp.BaseResponse;
+import zhenghc.entity.Course;
 import zhenghc.entity.CourseAppForm;
-import zhenghc.mapper.BookingRecordMapper;
-import zhenghc.mapper.CourseAppFormMapper;
-import zhenghc.mapper.MemberCourseMapper;
+import zhenghc.entity.CourseSchedule;
+import zhenghc.entity.User;
+import zhenghc.mapper.*;
 
 import java.util.List;
 
@@ -24,6 +27,10 @@ public class CourseManagerController {
     private MemberCourseMapper memberCourseMapper;
     @Autowired
     private BookingRecordMapper bookingRecordMapper;
+    @Autowired
+    private CourseMapper courseMapper;
+    @Autowired
+    private CourseScheduleMapper courseScheduleMapper;
 
     @PostMapping("/list")
     public BaseResponse list(){
@@ -59,5 +66,70 @@ public class CourseManagerController {
 
         return BaseResponse.success("操作成功",null);
     }
+
+
+    @PostMapping("/courseSetting")
+    public BaseResponse courseSetting(@RequestBody Course param){
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(user.getUserType() != 1){
+            return BaseResponse.error(BaseConstants.resultCode.BUSINESS_ERROR, "权限非法");
+        }
+
+        courseMapper.update(param);
+
+        return BaseResponse.success("修改成功",null);
+    }
+
+    @PostMapping("/courseAdd")
+    public BaseResponse courseAdd(@RequestBody Course param){
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(user.getUserType() != 1){
+            return BaseResponse.error(BaseConstants.resultCode.BUSINESS_ERROR, "权限非法");
+        }
+
+        courseMapper.insert(param);
+
+        return BaseResponse.success("添加成功",null);
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    @PostMapping("/deleteCourse")
+    public BaseResponse deleteCourse(@RequestBody Course param){
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(user.getUserType() != 1){
+            return BaseResponse.error(BaseConstants.resultCode.BUSINESS_ERROR, "权限非法");
+        }
+
+        courseMapper.delete(param);
+        courseScheduleMapper.deleteByCourseId(param.getId());
+
+        return BaseResponse.success("删除成功",null);
+    }
+
+
+    @PostMapping("/scheduleUpdate")
+    public BaseResponse scheduleUpdate(@RequestBody CourseSchedule param){
+
+        courseScheduleMapper.update(param);
+
+        return BaseResponse.success("修改成功",null);
+    }
+
+    @PostMapping("/deleteSchedule")
+    public BaseResponse deleteSchedule(@RequestBody CourseSchedule param){
+
+        courseScheduleMapper.delete(param);
+
+        return BaseResponse.success("删除成功",null);
+    }
+
+
+
+
+
 
 }

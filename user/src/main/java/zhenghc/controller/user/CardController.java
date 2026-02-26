@@ -34,10 +34,10 @@ public class CardController {
     @PostMapping("/createOrder")
     public BaseResponse createOrder(@RequestBody CardDTO cardDTO) {
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!cardDTO.getUserId().equals( user.getId())){
-            return BaseResponse.error( BaseConstants.resultCode.USER_ERROR,"用户权限非法");
-        }
+//        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        if(!cardDTO.getUserId().equals( user.getId())){
+//            return BaseResponse.error( BaseConstants.resultCode.USER_ERROR,"用户权限非法");
+//        }
         BaseResponse baseResponse;
         try{
             baseResponse = cardService.createOrder(cardDTO);
