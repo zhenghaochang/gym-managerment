@@ -11,4 +11,10 @@ public interface CourseMapper {
     List<CourseVo> selectAll();
 
     Course selectByCourseId(Long courseId);
+
+    void update(Course param);
+
+    void insert(Course param);
+
+    void delete(Course param);
 }

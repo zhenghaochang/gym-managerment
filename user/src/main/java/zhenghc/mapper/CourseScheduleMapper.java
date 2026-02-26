@@ -10,4 +10,9 @@ import java.util.List;
 public interface CourseScheduleMapper {
     List<ScheduleListVo> selectAll();
 
+    void update(CourseSchedule param);
+
+    void deleteByCourseId(Long courseId);
+
+    void delete(CourseSchedule param);
 }

@@ -22,4 +22,12 @@ public interface UserMapper {
     User selectByUserId(Long id);
 
     void update(User user);
+
+    List<User> selectAll();
+
+    List<User> selectAllByType(Integer type);
+
+    void deleteById(Long id);
+
+    List<User> selectAllManager();
 }

@@ -52,10 +52,14 @@
             <if test="birthday != null">birthday = #{birthday},</if>
             <if test="height != null">height = #{height},</if>
             <if test="weight != null">weight = #{weight},</if>
+            <if test="userType != null">user_type = #{userType},</if>
             <if test="status != null">status = #{status},</if>
         </set>
         where id = #{id}
     </update>
+    <delete id="deleteById">
+        delete from gym.user where id = #{id}
+    </delete>
 
 
     <!-- 查询用户 -->
@@ -76,5 +80,14 @@
     </select>
     <select id="selectByUserId" resultType="zhenghc.entity.User">
         select * from gym.user where id = #{id}
+    </select>
+    <select id="selectAll" resultType="zhenghc.entity.User">
+        select * from gym.user
+    </select>
+    <select id="selectAllByType" resultType="zhenghc.entity.User">
+        select * from gym.user where user_type = #{type}
+    </select>
+    <select id="selectAllManager" resultType="zhenghc.entity.User">
+        select * from gym.user where user_type = 2
     </select>
 </mapper>

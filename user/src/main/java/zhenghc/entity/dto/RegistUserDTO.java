@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 
-@Builder
 public class RegistUserDTO {
     /**
      * 用户id
