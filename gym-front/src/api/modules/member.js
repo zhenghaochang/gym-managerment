@@ -147,5 +147,50 @@ export const memberApi = {
   // 获取我的订单列表
   getMyOrderList() {
     return apiService.post('/myOrder/list')
+  },
+
+  // 获取用户列表（管理员）
+  getUserList() {
+    return apiService.post('/UserList/list')
+  },
+
+  // 新增管理员（超级管理员）
+  addManager(data) {
+    return apiService.post('/UserList/addManager', data)
+  },
+
+  // 获取管理员列表（用户管理页面）
+  getManagerList() {
+    return apiService.post('/UserList/managerList')
+  },
+
+  // 删除用户
+  deleteUser(data) {
+    return apiService.post('/UserList/delete', data)
+  },
+
+  // 修改用户类型（权限分配）
+  updateUserType(data) {
+    return apiService.post('/UserList/updateUserType', data)
+  },
+
+  // 课程设置（新增/编辑课程）
+  updateCourseSetting(data) {
+    return apiService.post('/courseManager/courseSetting', data)
+  },
+
+  // 新增课程
+  addCourse(data) {
+    return apiService.post('/courseManager/courseAdd', data)
+  },
+
+  // 删除课程
+  deleteCourse(data) {
+    return apiService.post('/courseManager/deleteCourse', data)
+  },
+
+  // 修改排课
+  updateSchedule(data) {
+    return apiService.post('/courseManager/scheduleUpdate', data)
   }
 }
