@@ -39,6 +39,12 @@ const routes = [
     component: () => import('@/views/system/Role.vue'),
     meta: { requiresAuth: true }
   },
+  {
+    path: '/system/permission',
+    name: 'SystemPermission',
+    component: () => import('@/views/system/Permission.vue'),
+    meta: { requiresAuth: true }
+  },
   // 办理会员卡
   {
     path: '/create-card',
@@ -117,9 +123,28 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/member/card',
+    name: 'CardManage',
+    component: () => import('@/views/member/CardManage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/member/application',
     name: 'ApplicationApproval',
     component: () => import('@/views/ApplicationApproval.vue'),
+    meta: { requiresAuth: true }
+  },
+  // 课程管理
+  {
+    path: '/course/setting',
+    name: 'CourseSetting',
+    component: () => import('@/views/course/CourseSetting.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/course/schedule',
+    name: 'ScheduleManage',
+    component: () => import('@/views/course/ScheduleManage.vue'),
     meta: { requiresAuth: true }
   },
   // 更多路由...

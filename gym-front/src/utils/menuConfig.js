@@ -2,9 +2,7 @@
 export const menuIconMap = {
   'system:manage': 'Setting',
   'user:manage': 'User',
-  'role:manage': 'UserFilled',
   'permission:assign': 'Key',
-  'log:view': 'Document',
   
   'member:manage': 'User',
   'member:list': 'List',
@@ -62,9 +60,7 @@ export const menuConfig = {
   // 系统管理
   'system:manage': { title: '系统管理', path: '/system', icon: 'Setting', parent: null, sort: 1 },
   'user:manage': { title: '用户管理', path: '/system/user', icon: 'User', parent: 'system:manage', sort: 10 },
-  'role:manage': { title: '角色管理', path: '/system/role', icon: 'UserFilled', parent: 'system:manage', sort: 20 },
   'permission:assign': { title: '权限分配', path: '/system/permission', icon: 'Key', parent: 'system:manage', sort: 30 },
-  'log:view': { title: '操作日志', path: '/system/log', icon: 'Document', parent: 'system:manage', sort: 40 },
   
   // 会员管理（管理员）
   'member:manage': { title: '会员管理', path: '/member', icon: 'User', parent: null, sort: 2 },
