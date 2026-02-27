@@ -41,7 +41,10 @@ const loadCourseList = async () => {
   try {
     const res = await memberApi.getCourseList()
     if (res.resCode === '00') {
-      courseList.value = res.result || []
+      courseList.value = (res.result || []).sort((a, b) => {
+        if (a.courseType !== b.courseType) return a.courseType - b.courseType
+        return a.id - b.id
+      })
     } else {
       ElMessage.warning(res.resMsg || '获取课程列表失败')
     }

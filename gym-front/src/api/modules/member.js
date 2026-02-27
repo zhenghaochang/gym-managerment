@@ -119,6 +119,11 @@ export const memberApi = {
     return apiService.post('/booking/courseCancel', data)
   },
 
+  // 获取所有预约记录（管理员）
+  getAllBookingRecords() {
+    return apiService.post('/courseManager/BookingList')
+  },
+
   // 获取我的申请列表
   getMyApplicationList() {
     return apiService.post('/myApplication/list')
@@ -189,8 +194,18 @@ export const memberApi = {
     return apiService.post('/courseManager/deleteCourse', data)
   },
 
+  // 新增排课
+  insertSchedule(data) {
+    return apiService.post('/courseManager/insertSchedule', data)
+  },
+
   // 修改排课
   updateSchedule(data) {
     return apiService.post('/courseManager/scheduleUpdate', data)
+  },
+
+  // 删除排课
+  deleteSchedule(data) {
+    return apiService.post('/courseManager/deleteSchedule', data)
   }
 }

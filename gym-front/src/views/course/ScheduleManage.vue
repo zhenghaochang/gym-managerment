@@ -36,7 +36,10 @@ const loadScheduleList = async () => {
     // TODO: 调用获取排课列表接口
     const res = await memberApi.getScheduleList(searchForm.value)
     if (res.resCode === '00') {
-      scheduleList.value = res.result || []
+      scheduleList.value = (res.result || []).sort((a, b) => {
+        if (a.weekDay !== b.weekDay) return a.weekDay - b.weekDay
+        return (a.startTime || '').localeCompare(b.startTime || '')
+      })
     } else {
       ElMessage.warning(res.resMsg || '获取排课列表失败')
     }
@@ -140,11 +143,31 @@ const submitForm = async () => {
     ElMessage.warning('请输入上课地点')
     return
   }
-  
+
+  // 冲突检测：同一天、同一地点、时间段重叠
+  const conflicts = scheduleList.value.filter(item => {
+    // 编辑时排除自身
+    if (scheduleForm.value.id && item.id === scheduleForm.value.id) return false
+    // 同一天 + 同一地点
+    if (item.weekDay !== scheduleForm.value.weekDay) return false
+    if (item.location !== scheduleForm.value.location) return false
+    // 时间段重叠判断：A开始 < B结束 且 B开始 < A结束
+    return scheduleForm.value.startTime < item.endTime && item.startTime < scheduleForm.value.endTime
+  })
+
+  if (conflicts.length > 0) {
+    const weekDayName = ['', '周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    const detail = conflicts.map(c => {
+      const name = getCourseInfo(c.courseId).courseName || `课程${c.courseId}`
+      return `「${name}」${weekDayName[c.weekDay]} ${c.startTime}-${c.endTime} ${c.location}`
+    }).join('\n')
+    ElMessage.warning(`时间和地点冲突，与以下排课冲突：\n${detail}`)
+    return
+  }
+
   loading.value = true
   try {
     const params = {
-      id: scheduleForm.value.id,
       courseId: scheduleForm.value.courseId,
       coachId: scheduleForm.value.coachId,
       weekDay: scheduleForm.value.weekDay,
@@ -154,7 +177,15 @@ const submitForm = async () => {
       maxCapacity: scheduleForm.value.maxCapacity,
       status: scheduleForm.value.status
     }
-    const res = await memberApi.updateSchedule(params)
+    let res
+    if (scheduleForm.value.id) {
+      // 编辑
+      params.id = scheduleForm.value.id
+      res = await memberApi.updateSchedule(params)
+    } else {
+      // 新增
+      res = await memberApi.insertSchedule(params)
+    }
     if (res.resCode === '00') {
       ElMessage.success(scheduleForm.value.id ? '编辑成功' : '新增成功')
       showDialog.value = false
@@ -178,9 +209,13 @@ const handleDelete = (row) => {
   }).then(async () => {
     loading.value = true
     try {
-      // TODO: 调用删除排课接口
-      ElMessage.success('删除成功')
-      loadScheduleList()
+      const res = await memberApi.deleteSchedule({ id: row.id })
+      if (res.resCode === '00') {
+        ElMessage.success(res.resMsg || '删除成功')
+        loadScheduleList()
+      } else {
+        ElMessage.warning(res.resMsg || '删除失败')
+      }
     } catch (e) {
       ElMessage.error('删除失败')
     } finally {
@@ -234,36 +269,36 @@ onMounted(async () => {
 
     <!-- 排课列表 -->
     <el-table :data="scheduleList" v-loading="loading" stripe style="width: 100%">
-      <el-table-column prop="id" label="排课ID" width="80" align="center" />
-      <el-table-column label="课程名称" width="150">
+      <el-table-column prop="id" label="排课ID" min-width="80" align="center" />
+      <el-table-column label="课程名称" min-width="150">
         <template #default="{ row }">
           {{ getCourseInfo(row.courseId).courseName || row.courseName || '--' }}
         </template>
       </el-table-column>
-      <el-table-column label="上课日期" width="120" align="center">
+      <el-table-column label="上课日期" min-width="100" align="center">
         <template #default="{ row }">
           {{ ['', '周一', '周二', '周三', '周四', '周五', '周六', '周日'][row.weekDay] || '--' }}
         </template>
       </el-table-column>
-      <el-table-column label="上课时间" width="180" align="center">
+      <el-table-column label="上课时间" min-width="150" align="center">
         <template #default="{ row }">
           {{ row.startTime }} - {{ row.endTime }}
         </template>
       </el-table-column>
-      <el-table-column prop="location" label="上课地点" width="150" />
-      <el-table-column label="教练" width="120">
+      <el-table-column prop="location" label="上课地点" min-width="160" />
+      <el-table-column label="教练" min-width="100">
         <template #default="{ row }">
           {{ getCourseInfo(row.courseId).coachName || '--' }}
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" width="100" align="center">
+      <el-table-column prop="status" label="状态" min-width="100" align="center">
         <template #default="{ row }">
           <el-tag :type="row.status == 1 ? 'success' : 'info'" size="small">
             {{ row.status == 1 ? '可预约' : '已取消' }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="180" align="center" fixed="right">
+      <el-table-column label="操作" min-width="150" align="center">
         <template #default="{ row }">
           <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
           <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>

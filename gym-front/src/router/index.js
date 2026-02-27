@@ -147,6 +147,12 @@ const routes = [
     component: () => import('@/views/course/ScheduleManage.vue'),
     meta: { requiresAuth: true }
   },
+  {
+    path: '/course/booking',
+    name: 'BookingManage',
+    component: () => import('@/views/course/BookingManage.vue'),
+    meta: { requiresAuth: true }
+  },
   // 更多路由...
 ]
 
