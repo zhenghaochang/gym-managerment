@@ -39,4 +39,7 @@
     <select id="selectAllByUserId" resultType="zhenghc.entity.BookingRecord">
         select * from gym.booking_record where user_id = #{userId}
     </select>
+    <select id="selectAll" resultType="zhenghc.entity.BookingRecord">
+        select * from gym.booking_record
+    </select>
 </mapper>

@@ -30,4 +30,6 @@ public interface BookingRecordMapper {
     List<BookingRecord> selectAllByUserId(Long id);
 
     void deleteById(Long id);
+
+    List<BookingRecord> selectAll();
 }

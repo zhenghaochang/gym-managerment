@@ -15,4 +15,6 @@ public interface CourseScheduleMapper {
     void deleteByCourseId(Long courseId);
 
     void delete(CourseSchedule param);
+
+    void insert(CourseSchedule param);
 }

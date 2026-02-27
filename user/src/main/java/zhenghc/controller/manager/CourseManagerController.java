@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import zhenghc.common.BaseConstants;
 import zhenghc.common.resp.BaseResponse;
-import zhenghc.entity.Course;
-import zhenghc.entity.CourseAppForm;
-import zhenghc.entity.CourseSchedule;
-import zhenghc.entity.User;
+import zhenghc.entity.*;
 import zhenghc.mapper.*;
 
 import java.util.List;
@@ -128,6 +125,21 @@ public class CourseManagerController {
     }
 
 
+    @PostMapping("/insertSchedule")
+    public BaseResponse insertSchedule(@RequestBody CourseSchedule param){
+
+        courseScheduleMapper.insert(param);
+
+        return BaseResponse.success("添加成功", null);
+    }
+
+    @PostMapping("/BookingList")
+    public BaseResponse bookingList(){
+
+        List<BookingRecord> list = bookingRecordMapper.selectAll();
+
+        return BaseResponse.success(list);
+    }
 
 
 
