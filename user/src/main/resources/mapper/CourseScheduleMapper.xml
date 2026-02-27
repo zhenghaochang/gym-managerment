@@ -4,6 +4,11 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="zhenghc.mapper.CourseScheduleMapper">
+    <insert id="insert">
+        insert into gym.course_schedule (course_id, coach_id, week_day, start_time, end_time, location, max_capacity, status)
+        value
+        (#{courseId},#{coachId},#{weekDay},#{startTime},#{endTime},#{location},#{maxCapacity},#{status})
+    </insert>
     <update id="update" parameterType="zhenghc.entity.CourseSchedule">
         update gym.course_schedule
         <set>
