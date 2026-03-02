@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zhenghc.mapper.SeckillActivityMapper">
+
+    <insert id="insert">
+        insert into gym.seckill_activity (card_id, card_name, original_price, seckill_price, total_stock, available_stock, start_time, end_time, status)
+        value
+        (#{cardId},#{cardName},#{originalPrice},#{seckillPrice},#{totalStock},#{availableStock},#{startTime},#{endTime},#{status})
+    </insert>
+    <update id="updateStatus">
+        update gym.seckill_activity set status = #{status} where id = #{id}
+    </update>
+    <update id="decreaseStock">
+        update gym.seckill_activity set available_stock = available_stock -1 where id = #{activityId}
+    </update>
+    <update id="increaseStock">
+        update gym.seckill_activity set available_stock = available_stock +1 where id = #{activityId}
+    </update>
+    <delete id="delete">
+        delete from gym.seckill_activity where id = #{id}
+    </delete>
+    <select id="selectAll" resultType="zhenghc.entity.SeckillActivity">
+        select * from gym.seckill_activity;
+    </select>
+    <select id="selectById" resultType="zhenghc.entity.SeckillActivity">
+        select * from gym.seckill_activity where id = #{id}
+    </select>
+</mapper>
