@@ -95,7 +95,7 @@ public class CardServiceImpl implements CardService {
                 memberCard.setTotalTimes( card.getTotalTimes());
                 memberCard.setRemainingTimes(card.getTotalTimes());
             }
-            memberCard.setStatus( 1);
+            memberCard.setStatus(1);
 
             memberCardMapper.insert(memberCard);
 

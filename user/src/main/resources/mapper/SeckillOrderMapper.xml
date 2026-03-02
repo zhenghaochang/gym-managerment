@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zhenghc.mapper.SeckillOrderMapper">
+    <insert id="insert">
+        insert into gym.seckill_order (order_no, user_id, activity_id, card_id, seckill_price, payment_method, status)
+        value
+        (#{orderNo},#{userId},#{activityId},#{cardId},#{seckillPrice},#{paymentMethod},#{status})
+    </insert>
+    <update id="updateStatusByOrderNo">
+        update gym.seckill_order set status = #{status} where order_no = #{orderNo}
+    </update>
+
+
+    <select id="selectByOrderNo" resultType="zhenghc.entity.SeckillOrder">
+        select * from gym.seckill_order where order_no = #{orderNo}
+    </select>
+    <select id="selectAllByUserId" resultType="zhenghc.entity.SeckillOrder">
+        select * from gym.seckill_order where user_id = #{userId}
+    </select>
+</mapper>

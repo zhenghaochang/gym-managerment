@@ -4,6 +4,22 @@ server:
     context-path: /api
 
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /     # 默认虚拟主机
+    # 开启消息确认回调（生产者确认）
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    # 消费者配置
+    listener:
+      simple:
+        acknowledge-mode: manual   # 手动确认
+        concurrency: 10              # 最小消费者数量
+        max-concurrency: 20         # 最大消费者数量
+        prefetch: 1                 # 每次预取1条消息，保证公平分发
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
