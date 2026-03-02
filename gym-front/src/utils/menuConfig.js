@@ -37,7 +37,9 @@ export const menuIconMap = {
   'member:course-booking': 'Calendar',
   'member:course-booking2': 'User',
   'member:my-application': 'Document',
-  'member:booked-record': 'Tickets'
+  'member:booked-record': 'Tickets',
+  'member:seckill': 'Lightning',
+  'seckill:manage': 'Lightning'
 }
 
 // 菜单配置（权限代码 -> 菜单信息）
@@ -56,6 +58,7 @@ export const menuConfig = {
   'member:course-booking2': { title: '私教预约', path: '/member/course-booking2', icon: 'User', parent: null, sort: 13 },
   'member:my-application': { title: '我的申请', path: '/member/myApplication', icon: 'Document', parent: null, sort: 14 },
   'member:booked-record': { title: '预约记录', path: '/member/bookedRecord', icon: 'Tickets', parent: null, sort: 15 },
+  'member:seckill': { title: '限时秒杀', path: '/member/seckill', icon: 'Lightning', parent: null, sort: 16 },
   
   // 系统管理
   'system:manage': { title: '系统管理', path: '/system', icon: 'Setting', parent: null, sort: 1 },
@@ -67,6 +70,7 @@ export const menuConfig = {
   'member:list': { title: '会员信息', path: '/member/list', icon: 'List', parent: 'member:manage', sort: 10 },
   'card:manage': { title: '办卡续费', path: '/member/card', icon: 'CreditCard', parent: 'member:manage', sort: 20 },
   'member:application': { title: '退课审批', path: '/member/application', icon: 'DocumentChecked', parent: 'member:manage', sort: 30 },
+  'seckill:manage': { title: '秒杀管理', path: '/member/seckill-manage', icon: 'Lightning', parent: 'member:manage', sort: 40 },
   
   // 课程管理
   'course:manage': { title: '课程管理', path: '/course', icon: 'Reading', parent: null, sort: 3 },
