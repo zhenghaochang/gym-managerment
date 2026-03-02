@@ -207,5 +207,57 @@ export const memberApi = {
   // 删除排课
   deleteSchedule(data) {
     return apiService.post('/courseManager/deleteSchedule', data)
+  },
+
+  // ========== 秒杀活动 ==========
+
+  // 获取秒杀活动列表
+  getSeckillList() {
+    return apiService.post('/seckill/list')
+  },
+
+  // 获取秒杀活动详情
+  getSeckillDetail(data) {
+    return apiService.post('/seckill/detail', data)
+  },
+
+  // 创建秒杀活动（管理员）
+  createSeckill(data) {
+    return apiService.post('/seckill/create', data)
+  },
+
+  // 开启/关闭秒杀活动（管理员）
+  toggleSeckill(data) {
+    return apiService.post('/seckill/toggle', data)
+  },
+
+  // 删除秒杀活动（管理员）
+  deleteSeckill(data) {
+    return apiService.post('/seckill/delete', data)
+  },
+
+  // 执行秒杀
+  seckillBuy(data) {
+    return apiService.post('/seckill/buy', data)
+  },
+
+  // 查询秒杀结果
+  getSeckillResult(data) {
+    return apiService.post('/seckill/result', data)
+  },
+
+  // 模拟支付秒杀订单
+  paySeckillOrder(data) {
+    return apiService.post('/seckill/pay', data)
+  },
+
+  // 获取秒杀订单列表（管理员）
+  getSeckillOrderList() {
+    return apiService.post('/seckill/orderList')
+  },
+
+  // 获取我的秒杀订单列表（会员）
+  getMySeckillOrders(data) {
+    return apiService.post('/seckill/myOrders', data)
   }
 }

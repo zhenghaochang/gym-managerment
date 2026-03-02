@@ -153,6 +153,20 @@ const routes = [
     component: () => import('@/views/course/BookingManage.vue'),
     meta: { requiresAuth: true }
   },
+  // 秒杀活动（会员端）
+  {
+    path: '/member/seckill',
+    name: 'Seckill',
+    component: () => import('@/views/Seckill.vue'),
+    meta: { requiresAuth: true }
+  },
+  // 秒杀活动管理（管理员端）
+  {
+    path: '/member/seckill-manage',
+    name: 'SeckillManage',
+    component: () => import('@/views/SeckillManage.vue'),
+    meta: { requiresAuth: true }
+  },
   // 更多路由...
 ]
 
