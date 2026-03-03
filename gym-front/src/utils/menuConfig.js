@@ -18,14 +18,6 @@ export const menuIconMap = {
   'coach:student': 'User',
   'coach:schedule': 'Calendar',
   
-  'equipment:manage': 'Box',
-  'equipment:list': 'List',
-  'repair:manage': 'Tools',
-  
-  'finance:manage': 'Wallet',
-  'order:manage': 'ShoppingCart',
-  'income:stat': 'TrendCharts',
-  
   'member:home': 'HomeFilled',
   'member:myCenter': 'User',
   'member:order': 'ShoppingCart',
@@ -82,16 +74,6 @@ export const menuConfig = {
   'coach:my-course': { title: '我的课程', path: '/coach/course', icon: 'Reading', parent: null, sort: 4 },
   'coach:student': { title: '学员管理', path: '/coach/student', icon: 'User', parent: 'coach:my-course', sort: 10 },
   'coach:schedule': { title: '排班管理', path: '/coach/schedule', icon: 'Calendar', parent: 'coach:my-course', sort: 20 },
-  
-  // 器械管理
-  'equipment:manage': { title: '器械管理', path: '/equipment', icon: 'Box', parent: null, sort: 5 },
-  'equipment:list': { title: '器械列表', path: '/equipment/list', icon: 'List', parent: 'equipment:manage', sort: 10 },
-  'repair:manage': { title: '报修管理', path: '/equipment/repair', icon: 'Tools', parent: 'equipment:manage', sort: 20 },
-  
-  // 财务管理
-  'finance:manage': { title: '财务管理', path: '/finance', icon: 'Wallet', parent: null, sort: 6 },
-  'order:manage': { title: '订单管理', path: '/finance/order', icon: 'ShoppingCart', parent: 'finance:manage', sort: 10 },
-  'income:stat': { title: '收入统计', path: '/finance/stat', icon: 'TrendCharts', parent: 'finance:manage', sort: 20 }
 }
 
 /**
