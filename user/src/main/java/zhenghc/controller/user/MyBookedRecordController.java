@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import zhenghc.common.resp.BaseResponse;
+import zhenghc.entity.BookingPrivateRecord;
 import zhenghc.entity.BookingRecord;
 import zhenghc.entity.User;
+import zhenghc.mapper.BookingPrivateRecordMapper;
 import zhenghc.mapper.BookingRecordMapper;
 
 import java.util.List;
@@ -18,8 +20,11 @@ public class MyBookedRecordController {
 
     private final BookingRecordMapper bookingRecordMapper;
 
-    public MyBookedRecordController(BookingRecordMapper bookingRecordMapper) {
+    private final BookingPrivateRecordMapper bookingPrivateRecordMapper;
+
+    public MyBookedRecordController(BookingRecordMapper bookingRecordMapper, BookingPrivateRecordMapper bookingPrivateRecordMapper) {
         this.bookingRecordMapper = bookingRecordMapper;
+        this.bookingPrivateRecordMapper = bookingPrivateRecordMapper;
     }
 
     @PostMapping("/list")
@@ -27,7 +32,7 @@ public class MyBookedRecordController {
 
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<BookingRecord> list = bookingRecordMapper.selectAllByUserId(user.getId());
+        List<BookingPrivateRecord> list = bookingPrivateRecordMapper.selectAllByUserId(user.getId());
         return BaseResponse.success(list);
     }
 
