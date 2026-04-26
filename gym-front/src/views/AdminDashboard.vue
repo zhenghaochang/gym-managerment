@@ -68,7 +68,7 @@ onMounted(() => {})
     </div>
 
     <!-- 数据概览 -->
-    <div class="stats-row">
+    <!-- <div class="stats-row">
       <div v-for="item in stats" :key="item.label" class="stat-item" @click="goTo(item.path)">
         <div class="stat-icon" :style="{ background: item.color + '15', color: item.color }">
           <el-icon :size="24"><component :is="item.icon" /></el-icon>
@@ -78,7 +78,7 @@ onMounted(() => {})
           <span class="stat-label">{{ item.label }}</span>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 快捷操作 -->
     <div class="section-header">

@@ -49,7 +49,7 @@ export const menuConfig = {
   'member:course-booking': { title: '团课预约', path: '/member/course-booking', icon: 'Calendar', parent: null, sort: 12 },
   'member:course-booking2': { title: '私教预约', path: '/member/course-booking2', icon: 'User', parent: null, sort: 13 },
   'member:my-application': { title: '我的申请', path: '/member/myApplication', icon: 'Document', parent: null, sort: 14 },
-  'member:booked-record': { title: '预约记录', path: '/member/bookedRecord', icon: 'Tickets', parent: null, sort: 15 },
+  // 'member:booked-record': { title: '预约记录', path: '/member/bookedRecord', icon: 'Tickets', parent: null, sort: 15 },
   'member:seckill': { title: '限时秒杀', path: '/member/seckill', icon: 'Lightning', parent: null, sort: 16 },
   
   // 系统管理
