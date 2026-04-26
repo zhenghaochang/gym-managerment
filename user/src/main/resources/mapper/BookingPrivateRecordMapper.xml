@@ -10,4 +10,7 @@
         value
         (#{userId},#{memberCourseId},#{coachId},#{bookingTime},#{remark})
     </insert>
+    <select id="selectAllByUserId" resultType="zhenghc.entity.BookingPrivateRecord">
+        select * from gym.booking_private_record where user_id = #{userId}
+    </select>
 </mapper>
