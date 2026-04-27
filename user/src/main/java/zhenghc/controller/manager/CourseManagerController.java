@@ -82,7 +82,7 @@ public class CourseManagerController {
     public BaseResponse courseAdd(@RequestBody Course param){
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(user.getUserType() != 1){
+        if(user.getUserType() != 1 && user.getUserType() != 2 ){
             return BaseResponse.error(BaseConstants.resultCode.BUSINESS_ERROR, "权限非法");
         }
 
