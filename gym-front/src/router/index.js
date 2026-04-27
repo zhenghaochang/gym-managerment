@@ -17,8 +17,7 @@ const routes = [
   // 主系统页面（有布局）
   {
     path: '/',
-    redirect: '/dashboard',
-    meta: { requiresAuth: true }
+    redirect: '/login'
   },
   {
     path: '/dashboard',
