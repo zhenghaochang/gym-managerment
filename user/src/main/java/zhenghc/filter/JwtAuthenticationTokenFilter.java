@@ -85,8 +85,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             throw new RuntimeException("token非法");
         }
 
-        // TODO 从redis中获取完整的用户信息
-        // 这里暂时创建一个简单的user对象
+        //从redis中获取完整的用户信息
         User user = (User) redisUtil.getValue(BaseConstants.USER_ID_KEY+userId);
 
         // 存入SecurityContextHolder
