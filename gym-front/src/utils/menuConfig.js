@@ -68,7 +68,7 @@ export const menuConfig = {
   'course:manage': { title: '课程管理', path: '/course', icon: 'Reading', parent: null, sort: 3 },
   'course:setting': { title: '课程设置', path: '/course/setting', icon: 'Setting', parent: 'course:manage', sort: 10 },
   'schedule:manage': { title: '排课管理', path: '/course/schedule', icon: 'Calendar', parent: 'course:manage', sort: 20 },
-  'booking:manage': { title: '预约管理', path: '/course/booking', icon: 'Tickets', parent: 'course:manage', sort: 30 },
+  // 'booking:manage': { title: '预约管理', path: '/course/booking', icon: 'Tickets', parent: 'course:manage', sort: 30 },
   
   // 教练菜单
   'coach:my-course': { title: '我的课程', path: '/coach/course', icon: 'Reading', parent: null, sort: 4 },
