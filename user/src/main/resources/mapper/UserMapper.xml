@@ -12,7 +12,7 @@
             <if test="userDTO.email != null">email,</if>
             <if test="userDTO.phone != null">phone,</if>
             <if test="userDTO.realName != null">real_name,</if>
-            <if test="userDTO.nickName != null">nickname,</if>
+            <if test="userDTO.nickName != null">nick_name,</if>
             <if test="userDTO.avatar != null">avatar,</if>
             <if test="userDTO.gender != null">gender,</if>
             <if test="userDTO.birthday != null">birthday,</if>
