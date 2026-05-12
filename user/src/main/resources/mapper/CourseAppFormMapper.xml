@@ -6,9 +6,9 @@
 <mapper namespace="zhenghc.mapper.CourseAppFormMapper">
 
     <insert id="insert">
-        insert into gym.course_application_form (member_course_id, app_type, status, form_num, app_reason, refuse_reason, real_name)
+        insert into gym.course_application_form (member_course_id, app_type, status, form_num, app_reason, refuse_reason, real_name, user_id)
         value
-        (#{memberCourseId},#{appType},#{status},#{formNum},#{appReason},#{refuseReason},#{realName})
+        (#{memberCourseId},#{appType},#{status},#{formNum},#{appReason},#{refuseReason},#{realName},#{userId})
     </insert>
     <update id="updateStatusByNum">
         update gym.course_application_form

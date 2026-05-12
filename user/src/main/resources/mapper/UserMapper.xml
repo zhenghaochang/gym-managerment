@@ -90,4 +90,7 @@
     <select id="selectAllManager" resultType="zhenghc.entity.User">
         select * from gym.user where user_type = 2
     </select>
+    <select id="selectAllPhoneList" resultType="java.lang.String">
+        select phone from gym.user
+    </select>
 </mapper>

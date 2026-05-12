@@ -32,9 +32,11 @@ public class userServiceImpl implements UserService {
 
         User user = userMapper.selectUserByUserName(username);
 
-        List<String> permissions = userMapper.selectPermissionsByUserId(user.getId());
+        if(user != null){
+            List<String> permissions = userMapper.selectPermissionsByUserId(user.getId());
 
-        user.setPermissions(permissions);
+            user.setPermissions(permissions);
+        }
 
         return user;
     }

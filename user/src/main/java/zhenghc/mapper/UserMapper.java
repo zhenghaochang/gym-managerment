@@ -30,4 +30,6 @@ public interface UserMapper {
     void deleteById(Long id);
 
     List<User> selectAllManager();
+
+    List<String> selectAllPhoneList();
 }

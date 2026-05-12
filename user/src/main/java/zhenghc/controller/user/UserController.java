@@ -22,6 +22,7 @@ import zhenghc.service.MailService;
 import zhenghc.service.user.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -55,6 +56,10 @@ public class UserController {
 
         User user = userService.login(loginDTO.getUsername());
 
+        if(user == null){
+            return BaseResponse.error("账号不存在");
+        }
+
         if(!user.getPassword().equals(loginDTO.getPassword())){
             return BaseResponse.error("用户名或密码错误");
         }
@@ -79,6 +84,10 @@ public class UserController {
         User returnUser = userMapper.selectUserByUserName(userDTO.getUsername());
         if(returnUser != null){
             return BaseResponse.error("用户已存在");
+        }
+        List<String> phoneList = userMapper.selectAllPhoneList();
+        if(phoneList.contains(userDTO.getPhone())){
+            return BaseResponse.error("手机号码已被注册");
         }
 
         try{
