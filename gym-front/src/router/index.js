@@ -100,12 +100,12 @@ const routes = [
     component: () => import('@/views/BookedRecord.vue'),
     meta: { requiresAuth: true, allowedUserTypes: [4] }
   },
-  // 个人中心（会员）
+  // 个人中心（所有角色）
   {
     path: '/member/myCenter',
     name: 'MyCenter',
     component: () => import('@/views/MyCenter.vue'),
-    meta: { requiresAuth: true, allowedUserTypes: [4] }
+    meta: { requiresAuth: true, allowedUserTypes: [1, 2, 3, 4] }
   },
   // 我的订单（会员）
   {
