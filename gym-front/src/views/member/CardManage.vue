@@ -130,16 +130,19 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="card-manage-page">
-    <div class="page-header">
-      <div class="header-left">
-        <el-icon :size="22"><CreditCard /></el-icon>
-        <div>
-          <h2>办卡续费</h2>
-          <p>为会员办理会员卡或续费</p>
+  <div class="card-manage-container">
+    <!-- 页面标题 -->
+    <el-card class="header-card" shadow="never">
+      <div class="header-content">
+        <div class="header-left">
+          <el-icon class="header-icon"><CreditCard /></el-icon>
+          <div class="header-text">
+            <h1 class="page-title">线下办卡</h1>
+            <p class="page-subtitle">为会员办理会员卡或续费</p>
+          </div>
         </div>
       </div>
-    </div>
+    </el-card>
 
     <!-- 搜索会员 -->
     <el-card class="search-card" shadow="never">
@@ -262,42 +265,71 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.card-manage-page {
-  padding: 24px;
+.card-manage-container {
+  padding: 20px;
   background: #f5f7fa;
-  min-height: 100%;
+  min-height: calc(100vh - 60px);
 }
 
-.page-header {
+/* 页面头部 */
+.header-card {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border: none;
+}
+
+.header-card :deep(.el-card__body) {
+  padding: 20px 24px;
+}
+
+.header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #303133;
 }
 
-.header-left h2 {
-  margin: 0;
+.header-icon {
+  font-size: 28px;
+  color: #409eff;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.page-title {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 600;
+  color: #303133;
+  margin: 0;
 }
 
-.header-left p {
-  margin: 0;
+.page-subtitle {
   font-size: 13px;
   color: #909399;
+  margin: 0;
 }
 
 .search-card,
 .member-info-card,
 .card-types-card {
   margin-bottom: 20px;
+  border-radius: 12px;
+  border: none;
+}
+
+.search-card :deep(.el-card__body),
+.member-info-card :deep(.el-card__body),
+.card-types-card :deep(.el-card__body) {
+  padding: 20px;
 }
 
 .card-header {

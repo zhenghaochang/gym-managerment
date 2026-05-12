@@ -13,21 +13,64 @@ const fetchCourseList = async () => {
     const res = await memberApi.getCourseList()
     
     if (res.resCode === '00') {
-      courses.value = (res.result || []).map(course => ({
-        id: course.id,
-        courseName: course.courseName,
-        courseType: course.courseType === 1 ? '团课' : '私教课',
-        courseTypeCode: course.courseType,
-        description: course.description,
-        duration: course.duration,
-        capacity: course.capacity,
-        difficultyLevel: course.difficultyLevel,
-        coach: course.coachName,
-        coachId: course.coachId,
-        status: course.status,
-        price: course.price || 0,
-        image: course.coverImage || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400'
-      }))
+      // 不同类型课程的默认图片
+      const courseImages = [
+        'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400', // 瑜伽
+        'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400', // 力量训练
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400', // 有氧运动
+        'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400', // 动感单车
+        'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400', // 健身房
+        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400', // 瑜伽2
+        'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400', // 普拉提
+        'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=400', // 搏击
+        'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400', // 舞蹈
+        'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=400', // 跑步
+        'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=400', // 拉伸
+        'https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=400'  // 器械
+      ]
+      
+      courses.value = (res.result || []).map((course, index) => {
+        const courseType = course.courseType === 1 ? '团课' : '私教课'
+        const courseName = course.courseName
+        
+        // 根据索引循环使用不同图片，确保每个课程都有不同的图片
+        let image = courseImages[index % courseImages.length]
+        
+        // 如果课程名称包含特定关键词，使用对应的图片
+        if (courseName.includes('瑜伽')) {
+          image = courseImages[0]
+        } else if (courseName.includes('力量') || courseName.includes('训练')) {
+          image = courseImages[1]
+        } else if (courseName.includes('有氧') || courseName.includes('跑步')) {
+          image = courseImages[2]
+        } else if (courseName.includes('单车') || courseName.includes('动感')) {
+          image = courseImages[3]
+        } else if (courseName.includes('普拉提')) {
+          image = courseImages[6]
+        } else if (courseName.includes('搏击') || courseName.includes('拳击')) {
+          image = courseImages[7]
+        } else if (courseName.includes('舞蹈') || courseName.includes('舞')) {
+          image = courseImages[8]
+        } else if (courseName.includes('拉伸')) {
+          image = courseImages[10]
+        }
+        
+        return {
+          id: course.id,
+          courseName: course.courseName,
+          courseType: courseType,
+          courseTypeCode: course.courseType,
+          description: course.description,
+          duration: course.duration,
+          capacity: course.capacity,
+          difficultyLevel: course.difficultyLevel,
+          coach: course.coachName,
+          coachId: course.coachId,
+          status: course.status,
+          price: course.price || 0,
+          image: image
+        }
+      })
     } else {
       ElMessage.error(res.resMsg || '获取课程列表失败')
     }

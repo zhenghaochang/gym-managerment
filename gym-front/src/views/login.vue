@@ -185,11 +185,11 @@ const showForgotPassword = () => {
           </div>
         </el-form-item>
 
-        <div class="forgot-password">
+        <!-- <div class="forgot-password">
           <el-button type="text" @click="showForgotPassword" class="forgot-link">
             忘记密码？
           </el-button>
-        </div>
+        </div> -->
 
         <el-button
             type="primary"

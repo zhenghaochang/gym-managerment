@@ -249,7 +249,7 @@ onMounted(() => {
         <div class="header-left">
           <el-icon class="header-icon"><DocumentChecked /></el-icon>
           <div class="header-text">
-            <h1 class="page-title">退课审批</h1>
+            <h1 class="page-title">申请审批</h1>
             <p class="page-subtitle">审批会员课程申请</p>
           </div>
         </div>

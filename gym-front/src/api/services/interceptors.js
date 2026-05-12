@@ -58,7 +58,13 @@ export function setupInterceptors(service, serviceName = '服务') {
             }, 1000)
             break
           case 403:
-            ElMessage.error('拒绝访问，权限不足')
+            ElMessage.error('权限不足，请重新登录')
+            // 清除 token 并跳转到登录页
+            localStorage.removeItem('token')
+            localStorage.removeItem('userInfo')
+            setTimeout(() => {
+              window.location.href = '/login'
+            }, 1000)
             break
           case 404:
             ElMessage.error('请求的资源不存在')

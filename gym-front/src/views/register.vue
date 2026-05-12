@@ -304,7 +304,7 @@ const removeAvatar = () => {
           </div>
         </el-form-item>
 
-        <el-form-item label="手机号（选填）" prop="phone" class="form-item">
+        <el-form-item label="手机号" prop="phone" class="form-item">
           <el-input 
             v-model="registerForm.phone" 
             placeholder="请输入手机号"
@@ -336,7 +336,7 @@ const removeAvatar = () => {
           </el-form-item>
         </div>
 
-        <el-form-item label="头像（选填）" class="form-item">
+        <!-- <el-form-item label="头像（选填）" class="form-item">
           <div class="avatar-upload-wrapper">
             <el-upload
                 class="avatar-uploader"
@@ -356,7 +356,7 @@ const removeAvatar = () => {
               </div>
             </el-upload>
           </div>
-        </el-form-item>
+        </el-form-item> -->
 
         <div class="form-row">
           <el-form-item label="性别（选填）" class="form-item half-width">

@@ -39,14 +39,47 @@ const stats = ref([
   { label: '今日订单', value: '--', icon: 'ShoppingCart', color: '#f56c6c', path: '/finance/order' }
 ])
 
-const quickLinks = [
-  { title: '会员管理', icon: 'User', path: '/member/list', desc: '查看和管理会员信息' },
-  { title: '退课审批', icon: 'DocumentChecked', path: '/member/application', desc: '处理退课和取消申请' },
-  { title: '课程设置', icon: 'Setting', path: '/course/setting', desc: '管理课程信息' },
-  { title: '排课管理', icon: 'Calendar', path: '/course/schedule', desc: '安排课程排班' },
-  { title: '订单管理', icon: 'ShoppingCart', path: '/finance/order', desc: '查看订单记录' },
-  { title: '器械管理', icon: 'Box', path: '/equipment/list', desc: '管理健身器械' }
-]
+const allQuickLinks = {
+  // 超级管理员快捷操作（对应左侧菜单）
+  superAdmin: [
+    { title: '用户管理', icon: 'User', path: '/system/user', desc: '管理系统用户账号' },
+    { title: '权限分配', icon: 'Key', path: '/system/permission', desc: '分配用户权限' },
+    { title: '会员信息', icon: 'List', path: '/member/list', desc: '查看和管理会员信息' },
+    { title: '线下办卡', icon: 'CreditCard', path: '/member/card', desc: '办理会员卡和续费' },
+    { title: '申请审批', icon: 'DocumentChecked', path: '/member/application', desc: '处理退课和取消申请' },
+    { title: '秒杀管理', icon: 'Lightning', path: '/member/seckill-manage', desc: '管理限时秒杀活动' },
+    { title: '课程设置', icon: 'Setting', path: '/course/setting', desc: '管理课程信息' },
+    { title: '排课管理', icon: 'Calendar', path: '/course/schedule', desc: '安排课程排班' }
+  ],
+  // 普通管理员快捷操作
+  admin: [
+    { title: '会员信息', icon: 'List', path: '/member/list', desc: '查看和管理会员信息' },
+    { title: '线下办卡', icon: 'CreditCard', path: '/member/card', desc: '办理会员卡和续费' },
+    { title: '申请审批', icon: 'DocumentChecked', path: '/member/application', desc: '处理退课和取消申请' },
+    { title: '秒杀管理', icon: 'Lightning', path: '/member/seckill-manage', desc: '管理限时秒杀活动' },
+    { title: '课程设置', icon: 'Setting', path: '/course/setting', desc: '管理课程信息' },
+    { title: '排课管理', icon: 'Calendar', path: '/course/schedule', desc: '安排课程排班' }
+  ],
+  // 教练快捷操作
+  coach: [
+    { title: '排班信息', icon: 'Calendar', path: '/coach/schedule', desc: '查看我的排班信息' }
+  ]
+}
+
+const quickLinks = computed(() => {
+  const userType = userInfo.value.userType
+  if (userType === 1) {
+    // 超级管理员
+    return allQuickLinks.superAdmin
+  } else if (userType === 2) {
+    // 普通管理员
+    return allQuickLinks.admin
+  } else if (userType === 3) {
+    // 教练
+    return allQuickLinks.coach
+  }
+  return []
+})
 
 const goTo = (path) => router.push(path)
 onMounted(() => {})

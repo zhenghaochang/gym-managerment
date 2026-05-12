@@ -79,12 +79,12 @@ export const memberApi = {
     return apiService.post('/myCourse/dropClass', data)
   },
 
-  // 获取退课审批列表
+  // 获取申请审批列表
   getCourseApplicationList() {
     return apiService.post('/courseManager/list')
   },
 
-  // 退课审批（通过/拒绝）
+  // 申请审批（通过/拒绝）
   updateCourseApplicationStatus(data) {
     return apiService.post('/courseManager/updateStatus', data)
   },

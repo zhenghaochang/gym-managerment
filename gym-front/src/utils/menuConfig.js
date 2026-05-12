@@ -60,8 +60,8 @@ export const menuConfig = {
   // 会员管理（管理员）
   'member:manage': { title: '会员管理', path: '/member', icon: 'User', parent: null, sort: 2 },
   'member:list': { title: '会员信息', path: '/member/list', icon: 'List', parent: 'member:manage', sort: 10 },
-  'card:manage': { title: '办卡续费', path: '/member/card', icon: 'CreditCard', parent: 'member:manage', sort: 20 },
-  'member:application': { title: '退课审批', path: '/member/application', icon: 'DocumentChecked', parent: 'member:manage', sort: 30 },
+  'card:manage': { title: '线下办卡', path: '/member/card', icon: 'CreditCard', parent: 'member:manage', sort: 20 },
+  'member:application': { title: '申请审批', path: '/member/application', icon: 'DocumentChecked', parent: 'member:manage', sort: 30 },
   'seckill:manage': { title: '秒杀管理', path: '/member/seckill-manage', icon: 'Lightning', parent: 'member:manage', sort: 40 },
   
   // 课程管理
@@ -72,8 +72,8 @@ export const menuConfig = {
   
   // 教练菜单
   'coach:my-course': { title: '我的课程', path: '/coach/course', icon: 'Reading', parent: null, sort: 4 },
-  'coach:student': { title: '学员管理', path: '/coach/student', icon: 'User', parent: 'coach:my-course', sort: 10 },
-  'coach:schedule': { title: '排班管理', path: '/coach/schedule', icon: 'Calendar', parent: 'coach:my-course', sort: 20 },
+  // 'coach:student': { title: '学员管理', path: '/coach/student', icon: 'User', parent: 'coach:my-course', sort: 10 },
+  'coach:schedule': { title: '排班信息', path: '/coach/schedule', icon: 'Calendar', parent: 'coach:my-course', sort: 20 },
 }
 
 /**
