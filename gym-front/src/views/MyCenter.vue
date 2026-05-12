@@ -190,7 +190,14 @@ onMounted(() => { fetchUserInfo() })
             <el-input v-model="editForm.email" placeholder="请输入邮箱" maxlength="100" />
           </el-form-item>
           <el-form-item label="生日">
-            <el-date-picker v-model="editForm.birthday" type="date" placeholder="选择生日" value-format="YYYY-MM-DD" style="width: 100%" />
+            <el-date-picker 
+              v-model="editForm.birthday" 
+              type="date" 
+              placeholder="选择生日" 
+              value-format="YYYY-MM-DD" 
+              format="YYYY-MM-DD"
+              style="width: 100%" 
+            />
           </el-form-item>
           <el-form-item label="身高(cm)">
             <el-input-number v-model="editForm.height" :min="0" :max="300" :precision="1" :step="0.5" style="width: 100%" />

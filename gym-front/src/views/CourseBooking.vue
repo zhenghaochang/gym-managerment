@@ -57,10 +57,10 @@ const isPurchased = (item) => purchasedCourseNames.value.has(item.courseName)
 const isFull = (item) => item.bookedCount >= item.capacity
 const isBooked = (item) => !!item.userBooked
 const isCancelling = (item) => item.recordStatus === 2
-const isDisabled = (item, dateStr) => isPast(dateStr) || isCancelling(item) || (!isBooked(item) && (!isPurchased(item) || isFull(item)))
+const isDisabled = (item, dateStr) => isPast(dateStr, item.startTime) || isCancelling(item) || (!isBooked(item) && (!isPurchased(item) || isFull(item)))
 
 const getButtonText = (item, dateStr) => {
-  if (isPast(dateStr)) return '已过期'
+  if (isPast(dateStr, item.startTime)) return '已过期'
   if (isCancelling(item)) return '取消中'
   if (isBooked(item)) return '取消预约'
   if (!isPurchased(item)) return '未购买'
@@ -97,7 +97,7 @@ const handleGroupBook = (item, dateInfo) => {
     cancelDialogVisible.value = true
     return
   }
-  if (isPast(dateInfo.date)) return
+  if (isPast(dateInfo.date, item.startTime)) return
   if (!isPurchased(item)) {
     ElMessage.warning('您尚未购买该课程，请先前往购买课程页面购买')
     return
@@ -192,7 +192,16 @@ const todayStr = computed(() => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 })
 const isToday = (dateStr) => dateStr === todayStr.value
-const isPast = (dateStr) => dateStr < todayStr.value
+const isPast = (dateStr, startTime = null) => {
+  // 如果只传日期，比较日期
+  if (!startTime) {
+    return dateStr < todayStr.value
+  }
+  // 如果传了开始时间，比较日期+时间
+  const now = new Date()
+  const courseDateTime = new Date(`${dateStr} ${startTime}:00`)
+  return now >= courseDateTime
+}
 
 // 加载课程列表，构建 courseId -> courseName 映射
 const loadCourseMap = async () => {

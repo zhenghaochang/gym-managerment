@@ -89,6 +89,14 @@ const filterData = () => {
   if (searchForm.value.appType !== '') {
     filtered = filtered.filter(item => item.appType === searchForm.value.appType)
   }
+  
+  // 按申请时间降序排序（由近到远）
+  filtered.sort((a, b) => {
+    const timeA = new Date(a.applyTime || a.createTime || 0).getTime()
+    const timeB = new Date(b.applyTime || b.createTime || 0).getTime()
+    return timeB - timeA
+  })
+  
   total.value = filtered.length
   const start = (pagination.value.currentPage - 1) * pagination.value.pageSize
   tableData.value = filtered.slice(start, start + pagination.value.pageSize)
